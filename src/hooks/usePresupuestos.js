@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { PRESUPUESTOS_MOCK } from '../data/mocks'
 
@@ -8,25 +8,44 @@ export function usePresupuestos() {
   const [presupuestos, setPresupuestos] = useState([])
   const [loading, setLoading] = useState(true)
   const [modoDemo, setModoDemo] = useState(false)
+  const [error, setError] = useState(null)
   const [nextNum, setNextNum] = useState(6)
 
-  useEffect(() => {
-    if (!supabase) {
+  const cargarPresupuestos = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      if (!supabase) {
+        setPresupuestos(PRESUPUESTOS_MOCK)
+        setModoDemo(true)
+        return
+      }
+      const { data, error: supabaseError } = await supabase
+        .from('presupuestos')
+        .select('*')
+        .order('created_at', { ascending: false })
+      
+      if (supabaseError) {
+        console.error('Supabase error:', supabaseError)
+        setError(supabaseError.message || 'Error al conectar con la base de datos')
+        setPresupuestos(PRESUPUESTOS_MOCK)
+        setModoDemo(true)
+      } else {
+        setPresupuestos(data || [])
+      }
+    } catch (err) {
+      console.error('Error inesperado:', err)
+      setError(err?.message || 'Error inesperado al cargar los presupuestos')
       setPresupuestos(PRESUPUESTOS_MOCK)
       setModoDemo(true)
+    } finally {
       setLoading(false)
-      return
     }
-    supabase
-      .from('presupuestos')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .then(({ data, error }) => {
-        if (error) { console.error('Supabase error:', error); setPresupuestos(PRESUPUESTOS_MOCK); setModoDemo(true) }
-        else setPresupuestos(data || [])
-        setLoading(false)
-      })
   }, [])
+
+  useEffect(() => {
+    cargarPresupuestos()
+  }, [cargarPresupuestos])
 
   async function addPresupuesto(formData) {
     const numero = `PRES-${new Date().getFullYear()}-${String(nextNum).padStart(3, '0')}`
@@ -56,7 +75,7 @@ export function usePresupuestos() {
     : 0
 
   return {
-    presupuestos, loading, modoDemo, addPresupuesto, calcTotal,
+    presupuestos, loading, modoDemo, error, addPresupuesto, calcTotal, recargar: cargarPresupuestos,
     kpi: { pendientes, totalAcept, margenMedio, numAceptados: aceptados.length },
   }
 }

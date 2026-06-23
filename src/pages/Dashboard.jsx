@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useObras } from '../hooks/useObras'
 import { usePresupuestos } from '../hooks/usePresupuestos'
 import { CATEGORIAS_BIBLIA } from '../data/catalogo-tecnico'
+import ErrorMessage from '../components/ErrorMessage'
 
 const fmt    = (n) => Number(n).toLocaleString('es-ES', { maximumFractionDigits: 0 })
 const fmtDec = (n) => Number(n).toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
@@ -25,8 +26,8 @@ const ACTIVIDAD = [
 ]
 
 export default function Dashboard({ navigate, selectedObraId, setSelectedObraId }) {
-  const { obras, kpi: oKpi, modoDemo } = useObras()
-  const { presupuestos, calcTotal }     = usePresupuestos()
+  const { obras, kpi: oKpi, modoDemo, loading: loadingObras, error: errorObras, recargar: recargarObras } = useObras()
+  const { presupuestos, calcTotal, loading: loadingPres, error: errorPres, recargar: recargarPres } = usePresupuestos()
   // obraSelId y setObraSelId vienen de App.jsx (estado global compartido)
   const obraSelId    = selectedObraId
   const setObraSelId = setSelectedObraId
@@ -58,6 +59,31 @@ export default function Dashboard({ navigate, selectedObraId, setSelectedObraId 
       finalizadas:obraSel.estado === 'finalizada' ? 1 : 0,
     }
   }, [obraSel, oKpi])
+
+  // Mostrar error global si ambas cargas fallan
+  const errorGlobal = errorObras || errorPres
+
+  if (errorGlobal && !loadingObras && !loadingPres) {
+    return (
+      <div className="space-y-8">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <span className="text-2xl">🏠</span>
+              <h1 className="text-2xl font-bold text-slate-800">Panel de Control</h1>
+            </div>
+            <p className="text-slate-500 text-sm">Error al cargar los datos del panel</p>
+          </div>
+        </div>
+        <ErrorMessage 
+          error={errorGlobal}
+          onRetry={() => { recargarObras(); recargarPres() }}
+          titulo="Error de conexión"
+          mensaje="No se pudieron cargar los datos desde la base de datos. Se está utilizando el modo demo con datos de ejemplo."
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">

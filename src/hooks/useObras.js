@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { OBRAS_MOCK } from '../data/mocks'
 
@@ -6,24 +6,43 @@ export function useObras() {
   const [obras, setObras] = useState([])
   const [loading, setLoading] = useState(true)
   const [modoDemo, setModoDemo] = useState(false)
+  const [error, setError] = useState(null)
 
-  useEffect(() => {
-    if (!supabase) {
+  const cargarObras = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      if (!supabase) {
+        setObras(OBRAS_MOCK)
+        setModoDemo(true)
+        return
+      }
+      const { data, error: supabaseError } = await supabase
+        .from('obras')
+        .select('*')
+        .order('created_at', { ascending: false })
+      
+      if (supabaseError) {
+        console.error('Supabase error:', supabaseError)
+        setError(supabaseError.message || 'Error al conectar con la base de datos')
+        setObras(OBRAS_MOCK)
+        setModoDemo(true)
+      } else {
+        setObras(data || [])
+      }
+    } catch (err) {
+      console.error('Error inesperado:', err)
+      setError(err?.message || 'Error inesperado al cargar las obras')
       setObras(OBRAS_MOCK)
       setModoDemo(true)
+    } finally {
       setLoading(false)
-      return
     }
-    supabase
-      .from('obras')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .then(({ data, error }) => {
-        if (error) { console.error('Supabase error:', error); setObras(OBRAS_MOCK); setModoDemo(true) }
-        else setObras(data || [])
-        setLoading(false)
-      })
   }, [])
+
+  useEffect(() => {
+    cargarObras()
+  }, [cargarObras])
 
   async function addObra(obraData) {
     if (!supabase) {
@@ -39,5 +58,5 @@ export function useObras() {
   const pausadas   = obras.filter(o => o.estado === 'pausada').length
   const finalizadas = obras.filter(o => o.estado === 'finalizada').length
 
-  return { obras, loading, modoDemo, addObra, kpi: { activas, pausadas, finalizadas } }
+  return { obras, loading, modoDemo, error, addObra, recargar: cargarObras, kpi: { activas, pausadas, finalizadas } }
 }

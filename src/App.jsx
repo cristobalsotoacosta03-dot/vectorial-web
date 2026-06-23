@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import ErrorBoundary from './components/ErrorBoundary'
 import Dashboard    from './pages/Dashboard'
 import Obras        from './pages/Obras'
 import Presupuestos from './pages/Presupuestos'
@@ -62,12 +63,14 @@ export default function App() {
 
       {/* Contenido principal */}
       <main className="max-w-7xl mx-auto px-6 py-8">
-        {page === 'dashboard'    && <Dashboard    navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />}
-        {page === 'obras'        && <Obras        navigate={navigate} />}
-        {page === 'presupuestos' && <Presupuestos navigate={navigate} />}
-        {page === 'materiales'   && <Materiales   navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />}
-        {page === 'catalogo'     && <Catalogo     navigate={navigate} />}
-        {page === 'calculadoras' && <Calculadoras navigate={navigate} selectedObraId={selectedObraId} />}
+        <ErrorBoundary>
+          {page === 'dashboard'    && <Dashboard    navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />}
+          {page === 'obras'        && <Obras        navigate={navigate} />}
+          {page === 'presupuestos' && <Presupuestos navigate={navigate} />}
+          {page === 'materiales'   && <Materiales   navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />}
+          {page === 'catalogo'     && <Catalogo     navigate={navigate} />}
+          {page === 'calculadoras' && <Calculadoras navigate={navigate} selectedObraId={selectedObraId} />}
+        </ErrorBoundary>
       </main>
 
       {/* Footer */}
