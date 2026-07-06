@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: 'Outfit', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  --color-midnight-950: #080b14;
+  --color-midnight-900: #0d1220;
+  --color-midnight-800: #141b2e;
+  --color-midnight-700: #1d2740;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+}
