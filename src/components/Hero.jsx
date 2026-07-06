@@ -47,7 +47,7 @@ function Hero() {
           gestión administrativa en cada obra.
         </motion.p>
 
-        <motion.div variants={item} className="mt-10">
+        <motion.div variants={item} className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
           <Link
             to="/sandbox"
             className={cn(
@@ -56,8 +56,43 @@ function Hero() {
               'hover:scale-105 hover:bg-orange-400 hover:shadow-orange-500/40',
             )}
           >
-            Acceder a Engineering Sandbox
+            Probar Engineering Sandbox
           </Link>
+          <a
+            href="#precios"
+            className="glass-panel inline-block rounded-2xl border border-white/5 bg-white/5 px-8 py-4 text-base font-semibold text-white transition-all duration-300 ease-in-out hover:bg-white/10 hover:border-white/15 hover:scale-105"
+          >
+            Ver planes y precios
+          </a>
+        </motion.div>
+
+        <motion.div variants={item} className="mt-20">
+          <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-white/5 bg-navy-900/40 shadow-2xl shadow-black/40 backdrop-blur-xl">
+            <div className="flex items-center gap-2 border-b border-white/5 bg-navy-800/40 px-4 py-3">
+              <span className="h-3 w-3 rounded-full bg-red-500/70" />
+              <span className="h-3 w-3 rounded-full bg-yellow-500/70" />
+              <span className="h-3 w-3 rounded-full bg-green-500/70" />
+            </div>
+            <div className="p-6">
+              <p className="text-left font-mono text-sm text-slate-400">
+                <span className="text-orange-500">$</span> gestiobra --calculate --fluid=water --diameter=25.4 --flow=3.5
+              </p>
+              <div className="mt-4 grid grid-cols-3 gap-4">
+                <div className="rounded-xl border border-white/5 bg-navy-800/30 p-4 text-left">
+                  <p className="text-xs text-slate-500">Velocidad</p>
+                  <p className="mt-1 font-mono text-lg text-white">1.842 m/s</p>
+                </div>
+                <div className="rounded-xl border border-orange-500/30 bg-orange-500/10 p-4 text-left">
+                  <p className="text-xs text-orange-400">Pérdida de carga</p>
+                  <p className="mt-1 font-mono text-lg text-white">0.2341 bar</p>
+                </div>
+                <div className="rounded-xl border border-white/5 bg-navy-800/30 p-4 text-left">
+                  <p className="text-xs text-slate-500">Régimen</p>
+                  <p className="mt-1 font-mono text-lg text-white">Turbulento</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </motion.div>
     </section>
