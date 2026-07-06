@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 
 const testimonials = [
   {
-    quote: 'GestiObra me ha ahorrado horas de cálculos en cada obra. Ahora puedo atender a más clientes.',
+    quote: 'VECTORIAL me ha ahorrado horas de cálculos en cada obra. Ahora puedo atender a más clientes.',
     author: 'Carlos M.',
     role: 'Instalador industrial autónomo',
   },

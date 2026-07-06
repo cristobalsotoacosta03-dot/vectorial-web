@@ -22,7 +22,7 @@ function EngineeringSandbox() {
             Engineering Sandbox
           </h2>
           <p className="mt-4 text-lg text-slate-400 tracking-wide">
-            El motor de cálculo de GestiObra, en bruto. Sin comerciales, solo
+            El motor de cálculo de VECTORIAL, en bruto. Sin comerciales, solo
             fórmulas.
           </p>
         </div>

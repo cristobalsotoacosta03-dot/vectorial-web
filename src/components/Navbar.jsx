@@ -5,11 +5,11 @@ function Navbar() {
         <div className="flex items-center gap-3">
           <img
             src="/logo.svg"
-            alt="GestiObra"
+            alt="VECTORIAL"
             className="h-8 w-auto"
           />
           <span className="font-heading text-xl font-semibold text-white tracking-wide">
-            Gesti<span className="text-orange-500">Obra</span>
+            VEC<span className="text-orange-500">TORIAL</span>
           </span>
         </div>
         <a
