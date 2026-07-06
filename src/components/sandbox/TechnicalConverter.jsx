@@ -6,11 +6,7 @@ import {
   PRESSURE_FACTORS,
   convertFromBase,
 } from '../../lib/engineering'
-
-const inputClass =
-  'glass-panel w-full rounded-xl border border-white/5 bg-navy-900/40 px-4 py-3 text-white placeholder:text-slate-500 focus:border-orange-500/50 focus:outline-none focus:ring-2 focus:ring-orange-500/30'
-
-const labelClass = 'mb-2 block text-sm font-medium text-slate-300 tracking-wide'
+import { inputClass, labelClass } from '../../lib/uiConstants'
 
 function ResultRow({ label, value, unit }) {
   return (

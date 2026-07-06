@@ -33,3 +33,37 @@ h3 {
 .glass-panel:hover {
   border-color: rgba(255, 255, 255, 0.15);
 }
+
+/* ============================================================================
+   Vista de impresión — Informe Técnico VECTORIAL
+   Aísla #vectorial-print-report como única superficie visible al imprimir,
+   para que un informe de cálculo se imprima como documento formal (sin
+   navbar, tabs ni fondo oscuro) con cabecera, fecha y márgenes de página.
+   ============================================================================ */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #vectorial-print-report,
+  #vectorial-print-report * {
+    visibility: visible;
+  }
+
+  #vectorial-print-report {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  @page {
+    margin: 2cm;
+  }
+}

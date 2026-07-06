@@ -2,11 +2,9 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ToolHeader from './ToolHeader'
 import { ENCLOSURE_PRESETS, calculateThermalPower } from '../../lib/engineering'
-
-const inputClass =
-  'glass-panel w-full rounded-xl border border-white/5 bg-navy-900/40 px-4 py-3 text-white placeholder:text-slate-500 focus:border-orange-500/50 focus:outline-none focus:ring-2 focus:ring-orange-500/30'
-
-const labelClass = 'mb-2 block text-sm font-medium text-slate-300 tracking-wide'
+import { inputClass, labelClass } from '../../lib/uiConstants'
+import InfoTooltip from './InfoTooltip'
+import TechnicalReport from './TechnicalReport'
 
 function ThermalSizing() {
   const [area, setArea] = useState('')
@@ -14,6 +12,7 @@ function ThermalSizing() {
   const [enclosureKey, setEnclosureKey] = useState('wall_insulated')
   const [u, setU] = useState(ENCLOSURE_PRESETS.wall_insulated.u)
   const [result, setResult] = useState(null)
+  const [showReport, setShowReport] = useState(false)
 
   const handleEnclosureChange = (event) => {
     const key = event.target.value
@@ -84,6 +83,7 @@ function ThermalSizing() {
         <div className="text-left">
           <label htmlFor="enclosure" className={labelClass}>
             Tipo de cerramiento
+            <InfoTooltip text="Coeficientes U de referencia según CTE DB-HE e ISO 6946." />
           </label>
           <select
             id="enclosure"
@@ -149,6 +149,41 @@ function ThermalSizing() {
               Cálculo de transmisión básico (Q = U·A·ΔT). No incluye
               renovaciones de aire ni puentes térmicos.
             </p>
+
+            <div className="mt-4 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowReport(!showReport)}
+                className="glass-panel px-6 py-3 rounded-xl text-sm font-semibold text-orange-400 border border-orange-500/30 hover:bg-orange-500/10 transition-all"
+              >
+                {showReport ? 'Ocultar Informe' : '📄 Generar Informe Técnico'}
+              </button>
+            </div>
+
+            <AnimatePresence>
+              {showReport && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-4"
+                >
+                  <TechnicalReport
+                    type="thermal"
+                    calculationData={{
+                      inputs: {
+                        area: parseFloat(area),
+                        deltaT: parseFloat(deltaT),
+                        u: parseFloat(u),
+                      },
+                      results: result,
+                      metadata: result.metadata,
+                    }}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
