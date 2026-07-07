@@ -9,7 +9,7 @@ import {
 } from '../../lib/engineering'
 import { MATERIAL_CATALOG } from '../../lib/materials'
 import { estimateBillOfMaterials } from '../../lib/bom'
-import { inputClass, labelClass } from '../../lib/uiConstants'
+import { inputClass, labelClass, getInputClass } from '../../lib/uiConstants'
 import InfoTooltip from './InfoTooltip'
 import TechnicalReport from './TechnicalReport'
 
@@ -40,6 +40,27 @@ function GasCalculator() {
     }
     return estimateBillOfMaterials({ length: lengthValue, diameter: diameterValue, material: materialKey })
   }, [diameter, length, materialKey])
+
+  const diameterRange = useMemo(() => {
+    const catalog = MATERIAL_CATALOG[materialKey]?.catalog
+    if (!catalog?.length) return null
+    const ids = catalog.map((pipe) => pipe.id)
+    return { min: Math.min(...ids), max: Math.max(...ids) }
+  }, [materialKey])
+
+  const diameterStatus = useMemo(() => {
+    if (!diameter || !diameterRange) return 'ok'
+    const value = parseFloat(diameter)
+    if (!Number.isFinite(value) || value <= 0) return 'error'
+    if (value < diameterRange.min || value > diameterRange.max) return 'warning'
+    return 'ok'
+  }, [diameter, diameterRange])
+
+  const pressureStatus = useMemo(() => {
+    if (!pressure) return 'ok'
+    const value = parseFloat(pressure)
+    return Number.isFinite(value) && value > 0 ? 'ok' : 'error'
+  }, [pressure])
 
   const handleCalculate = (event) => {
     event.preventDefault()
@@ -100,7 +121,7 @@ function GasCalculator() {
   return (
     <div>
       <ToolHeader
-        icon="🔥"
+        icon="GAS"
         title="Instalaciones de Gas"
         description="Cálculo de pérdida de carga en tuberías de gas según UNE 60670:2006."
       />
@@ -177,8 +198,16 @@ function GasCalculator() {
             value={diameter}
             onChange={(event) => setDiameter(event.target.value)}
             placeholder="ej. 28"
-            className={inputClass}
+            className={getInputClass(diameterStatus)}
           />
+          {diameterStatus === 'warning' && diameterRange && (
+            <p className="mt-1 text-xs text-orange-400">
+              Fuera de gama comercial ({diameterRange.min}–{diameterRange.max} mm) para el material seleccionado.
+            </p>
+          )}
+          {diameterStatus === 'error' && (
+            <p className="mt-1 text-xs text-red-400">Introducir un diámetro mayor que cero.</p>
+          )}
         </div>
 
         <div className="text-left">
@@ -212,8 +241,11 @@ function GasCalculator() {
             value={pressure}
             onChange={(event) => setPressure(event.target.value)}
             placeholder="ej. 25"
-            className={inputClass}
+            className={getInputClass(pressureStatus)}
           />
+          {pressureStatus === 'error' && (
+            <p className="mt-1 text-xs text-red-400">Introducir una presión mayor que cero.</p>
+          )}
           <p className="mt-1 text-xs text-slate-500">
             Presión nominal de la acometida en milibares
           </p>
@@ -221,7 +253,7 @@ function GasCalculator() {
 
         <button
           type="submit"
-          className="sm:col-span-2 glass-panel rounded-2xl bg-orange-500 px-8 py-3 text-base font-semibold text-white shadow-xl shadow-orange-500/20 transition-all duration-300 ease-in-out hover:scale-105 hover:bg-orange-400 hover:shadow-orange-500/40"
+          className="sm:col-span-2 glass-panel rounded-2xl bg-orange-500 px-8 py-3 text-base font-semibold text-white shadow-xl shadow-orange-500/20 transition-all duration-100 ease-in-out hover:scale-105 hover:bg-orange-400 hover:shadow-orange-500/40"
         >
           Calcular pérdida de carga
         </button>
@@ -380,7 +412,7 @@ function GasCalculator() {
                 onClick={() => setShowReport(!showReport)}
                 className="glass-panel px-6 py-3 rounded-xl text-sm font-semibold text-orange-400 border border-orange-500/30 hover:bg-orange-500/10 transition-all"
               >
-                {showReport ? 'Ocultar Informe' : '📄 Generar Informe Técnico'}
+                {showReport ? 'Ocultar informe' : 'Generar informe'}
               </button>
             </div>
 

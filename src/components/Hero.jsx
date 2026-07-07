@@ -52,7 +52,7 @@ function Hero() {
             to="/sandbox"
             className={cn(
               'inline-block rounded-2xl bg-orange-500 px-8 py-4 text-base font-semibold text-white',
-              'shadow-xl shadow-orange-500/20 transition-all duration-300 ease-in-out',
+              'shadow-xl shadow-orange-500/20 transition-all duration-100 ease-in-out',
               'hover:scale-105 hover:bg-orange-400 hover:shadow-orange-500/40',
             )}
           >
@@ -60,7 +60,7 @@ function Hero() {
           </Link>
           <a
             href="#precios"
-            className="glass-panel inline-block rounded-2xl border border-white/5 bg-white/5 px-8 py-4 text-base font-semibold text-white transition-all duration-300 ease-in-out hover:bg-white/10 hover:border-white/15 hover:scale-105"
+            className="glass-panel inline-block rounded-2xl border border-white/5 bg-white/5 px-8 py-4 text-base font-semibold text-white transition-all duration-100 ease-in-out hover:bg-white/10 hover:border-white/15 hover:scale-105"
           >
             Ver planes y precios
           </a>

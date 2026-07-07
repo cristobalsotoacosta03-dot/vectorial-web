@@ -14,10 +14,6 @@
 
 import { getMaterial, getFluid } from './materials'
 
-// ============================================================================
-// CONSTANTES FÍSICAS
-// ============================================================================
-
 /**
  * Constante gravitacional (m/s²).
  * @type {number}
@@ -29,10 +25,6 @@ export const GRAVITY = 9.81
  * @type {number}
  */
 export const BAR_TO_PASCAL = 100000
-
-// ============================================================================
-// PRESETS DE FLUIDOS
-// ============================================================================
 
 /**
  * Presets de fluidos comunes con propiedades físicas a temperatura de referencia.
@@ -82,10 +74,6 @@ export const FLUID_PRESETS = {
     viscosity: null,
   },
 }
-
-// ============================================================================
-// PRESETS DE MATERIALES Y CERRAMIENTOS
-// ============================================================================
 
 /**
  * Diámetros nominales estándar: pulgada -> DN acero (ISO 6708) / cobre (EN 1057).
@@ -144,10 +132,6 @@ export const ENCLOSURE_PRESETS = {
   floor_insulated: { label: 'Suelo con aislamiento', u: 0.4 },
   custom: { label: 'Personalizado', u: null },
 }
-
-// ============================================================================
-// FUNCIONES DE CÁLCULO - HIDRÁULICA
-// ============================================================================
 
 /**
  * Calcula la pérdida de carga en tuberías usando Darcy-Weisbach.
@@ -344,10 +328,6 @@ export function calculateFittingLosses({
   }
 }
 
-// ============================================================================
-// FUNCIONES DE CÁLCULO - GAS (UNE 60670)
-// ============================================================================
-
 /**
  * Velocidad máxima admisible en tuberías de instalaciones receptoras de gas.
  * Fuente: UNE 60670-4/6 (tramos vistos o registrables).
@@ -440,10 +420,6 @@ export function calculateGasPressureDrop({
     },
   }
 }
-
-// ============================================================================
-// FUNCIONES DE CÁLCULO - TERMOTÉCNICA
-// ============================================================================
 
 /**
  * Calcula la potencia térmica por transmisión a través de un cerramiento.
@@ -539,10 +515,6 @@ export function calculateHeatPumpPower(thermalPower, cop = 3.5) {
     },
   }
 }
-
-// ============================================================================
-// FUNCIONES DE UTILIDAD
-// ============================================================================
 
 /**
  * Convierte un valor desde una unidad base a múltiples unidades.

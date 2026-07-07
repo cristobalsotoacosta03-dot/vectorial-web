@@ -7,10 +7,6 @@
  * @version 2.0.0
  */
 
-// ============================================================================
-// CATÁLOGO DE TUBERÍAS - ACERO
-// ============================================================================
-
 /**
  * Tuberías de acero negro según UNE EN 10255 (serie media).
  * Incluye diámetros nominales, espesores y diámetros interiores.
@@ -66,10 +62,6 @@ export const PVC_PIPE_STANDARD = [
   { dn: 75, inch: '2 1/2"', od: 90, thickness: 5.4, id: 79.2 },
   { dn: 90, inch: '3"', od: 110, thickness: 6.6, id: 96.8 },
 ]
-
-// ============================================================================
-// CATÁLOGO DE MATERIALES CON RUGOSIDAD
-// ============================================================================
 
 /**
  * Catálogo completo de materiales con propiedades normalizadas.
@@ -151,10 +143,6 @@ export const MATERIAL_CATALOG = {
     color: '#57534e',
   },
 }
-
-// ============================================================================
-// CATÁLOGO DE FLUIDOS
-// ============================================================================
 
 /**
  * Catálogo completo de fluidos con propiedades físicas.
@@ -244,10 +232,6 @@ export const FLUID_CATALOG = {
   },
 }
 
-// ============================================================================
-// CATÁLOGO DE CERRAMIENTOS
-// ============================================================================
-
 /**
  * Catálogo de cerramientos con propiedades térmicas.
  * Fuente: CTE DB-HE, ISO 6946.
@@ -328,10 +312,6 @@ export const ENCLOSURE_CATALOG = {
     description: 'Certificación Passivhaus (U ≤ 0.8 W/m²K)',
   },
 }
-
-// ============================================================================
-// FUNCIONES DE UTILIDAD
-// ============================================================================
 
 /**
  * Obtiene un material por su clave.

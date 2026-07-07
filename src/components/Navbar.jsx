@@ -14,7 +14,7 @@ function Navbar() {
         </div>
         <a
           href="#acceder"
-          className="rounded-xl bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-orange-500/20 transition-all duration-300 hover:scale-105 hover:bg-orange-400"
+          className="rounded-xl bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-orange-500/20 transition-all duration-100 hover:scale-105 hover:bg-orange-400"
         >
           Acceder a App
         </a>

@@ -20,8 +20,24 @@ function readAll() {
 }
 
 function writeAll(entries) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries))
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries))
+  } catch {
+    // Almacenamiento no disponible (privado/lleno): la sesión sigue
+    // funcionando en memoria a través de los listeners, aunque no persista.
+  }
   listeners.forEach((listener) => listener(entries))
+}
+
+/**
+ * Reemplaza el listado completo de cálculos (usado al importar un proyecto).
+ * No valida el contenido — la validación de forma vive en exportUtils.js,
+ * que es quien conoce el formato del fichero de proyecto.
+ *
+ * @param {Array<Object>} entries
+ */
+export function replaceAllCalculations(entries) {
+  writeAll(Array.isArray(entries) ? entries : [])
 }
 
 /**
@@ -37,11 +53,23 @@ export function saveCalculation(entry) {
   const saved = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     savedAt: new Date().toISOString(),
+    note: '',
     ...entry,
   }
   const entries = [saved, ...readAll()]
   writeAll(entries)
   return saved
+}
+
+/**
+ * Actualiza la nota de campo de un cálculo guardado (p. ej. "Ojo: trazado
+ * modificado por columna"). Pensada para anotaciones tomadas en obra.
+ *
+ * @param {string} id
+ * @param {string} note
+ */
+export function updateCalculationNote(id, note) {
+  writeAll(readAll().map((entry) => (entry.id === id ? { ...entry, note } : entry)))
 }
 
 /**

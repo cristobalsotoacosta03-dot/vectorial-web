@@ -119,7 +119,7 @@ function Pricing() {
 
               <Link
                 to="/sandbox"
-                className={`mt-8 block w-full rounded-2xl px-6 py-3 text-center text-sm font-semibold transition-all duration-300 ease-in-out ${
+                className={`mt-8 block w-full rounded-2xl px-6 py-3 text-center text-sm font-semibold transition-all duration-100 ease-in-out ${
                   plan.highlighted
                     ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20 hover:scale-105 hover:bg-orange-400'
                     : 'glass-panel border border-white/5 bg-white/5 text-white hover:bg-white/10 hover:border-white/15'

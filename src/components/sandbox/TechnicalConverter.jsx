@@ -149,7 +149,7 @@ function TechnicalConverter() {
   return (
     <div>
       <ToolHeader
-        icon="🔁"
+        icon="⇄"
         title="Equivalencias"
         description="Conversión técnica instantánea entre las unidades más habituales en obra."
       />

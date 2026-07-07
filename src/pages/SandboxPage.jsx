@@ -13,7 +13,7 @@ function SandboxPage() {
             glass-panel inline-flex items-center gap-2 rounded-xl
             bg-white/5 border border-white/5 px-4 py-2.5
             text-sm font-medium text-slate-300
-            backdrop-blur-xl transition-all duration-300 ease-in-out
+            backdrop-blur-xl transition-all duration-100 ease-in-out
             hover:bg-white/10 hover:text-white hover:border-white/15
             hover:scale-105
           `}

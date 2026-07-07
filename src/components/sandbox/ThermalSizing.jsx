@@ -40,7 +40,7 @@ function ThermalSizing() {
   return (
     <div>
       <ToolHeader
-        icon="🌡️"
+        icon="ΔT"
         title="Dimensionado"
         description="Potencia térmica básica por transmisión: Q = U · A · ΔT."
       />
@@ -121,7 +121,7 @@ function ThermalSizing() {
 
         <button
           type="submit"
-          className="glass-panel sm:col-span-2 rounded-2xl bg-orange-500 px-8 py-3 text-base font-semibold text-white shadow-xl shadow-orange-500/20 transition-all duration-300 ease-in-out hover:scale-105 hover:bg-orange-400 hover:shadow-orange-500/40"
+          className="glass-panel sm:col-span-2 rounded-2xl bg-orange-500 px-8 py-3 text-base font-semibold text-white shadow-xl shadow-orange-500/20 transition-all duration-100 ease-in-out hover:scale-105 hover:bg-orange-400 hover:shadow-orange-500/40"
         >
           Calcular
         </button>
@@ -156,7 +156,7 @@ function ThermalSizing() {
                 onClick={() => setShowReport(!showReport)}
                 className="glass-panel px-6 py-3 rounded-xl text-sm font-semibold text-orange-400 border border-orange-500/30 hover:bg-orange-500/10 transition-all"
               >
-                {showReport ? 'Ocultar Informe' : '📄 Generar Informe Técnico'}
+                {showReport ? 'Ocultar informe' : 'Generar informe'}
               </button>
             </div>
 

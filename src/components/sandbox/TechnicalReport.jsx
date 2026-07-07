@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { exportCalculationToJSON } from '../../lib/exportUtils'
 import { saveCalculation } from '../../lib/calculationStore'
+import { useCalculationHistory } from '../../hooks/useCalculationHistory'
+import { useProjectMeta } from '../../hooks/useProjectMeta'
 
 /**
  * Configuración de presentación por tipo de informe: qué campos de
@@ -81,6 +83,25 @@ function formatValue(value, decimals) {
 function TechnicalReport({ calculationData, type = 'pipe_flow' }) {
   const [isGenerating, setIsGenerating] = useState(false)
   const [savedMessage, setSavedMessage] = useState('')
+  const projectMeta = useProjectMeta()
+  const savedCalculations = useCalculationHistory()
+
+  const projectBomTotals = useMemo(() => {
+    const totals = new Map()
+    for (const entry of savedCalculations) {
+      const bom = entry.calculationData?.bom
+      if (!bom) continue
+      for (const item of bom.items) {
+        const existing = totals.get(item.key)
+        if (existing) {
+          existing.quantity += item.quantity
+        } else {
+          totals.set(item.key, { label: item.label, quantity: item.quantity })
+        }
+      }
+    }
+    return Array.from(totals.values())
+  }, [savedCalculations])
 
   if (!calculationData) return null
 
@@ -113,20 +134,20 @@ function TechnicalReport({ calculationData, type = 'pipe_flow' }) {
             onClick={handleSaveToDashboard}
             className="glass-panel px-4 py-2 rounded-xl text-sm font-semibold text-blue-400 border border-blue-500/30 hover:bg-blue-500/10 transition-all"
           >
-            💾 Guardar en Dashboard
+            Guardar en Dashboard
           </button>
           <button
             onClick={handleExportJSON}
             className="glass-panel px-4 py-2 rounded-xl text-sm font-semibold text-green-400 border border-green-500/30 hover:bg-green-500/10 transition-all"
           >
-            ⬇️ Exportar JSON
+            Exportar JSON
           </button>
           <button
             onClick={handlePrint}
             disabled={isGenerating}
             className="glass-panel px-4 py-2 rounded-xl text-sm font-semibold text-orange-400 border border-orange-500/30 hover:bg-orange-500/10 transition-all disabled:opacity-50"
           >
-            {isGenerating ? 'Generando...' : '🖨️ Imprimir / PDF'}
+            {isGenerating ? 'Generando...' : 'Imprimir'}
           </button>
         </div>
       </div>
@@ -179,9 +200,34 @@ function TechnicalReport({ calculationData, type = 'pipe_flow' }) {
             </div>
             <div className="mt-2 sm:mt-0 text-right">
               <p>Referencia: {config.reference}</p>
-              <p>Versión: 2.2.0</p>
+              <p>Versión: 2.3.0</p>
             </div>
           </div>
+
+          {(projectMeta.author || projectMeta.projectId || projectMeta.client || projectMeta.date) && (
+            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 border-t border-white/10 pt-3 text-xs text-slate-400 print:text-slate-700 sm:grid-cols-4">
+              {projectMeta.projectId && (
+                <p>
+                  <span className="text-slate-500">ID de Obra:</span> {projectMeta.projectId}
+                </p>
+              )}
+              {projectMeta.client && (
+                <p>
+                  <span className="text-slate-500">Cliente:</span> {projectMeta.client}
+                </p>
+              )}
+              {projectMeta.author && (
+                <p>
+                  <span className="text-slate-500">Autor:</span> {projectMeta.author}
+                </p>
+              )}
+              {projectMeta.date && (
+                <p>
+                  <span className="text-slate-500">Fecha ref.:</span> {projectMeta.date}
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Datos de entrada */}
@@ -339,9 +385,34 @@ function TechnicalReport({ calculationData, type = 'pipe_flow' }) {
           </div>
         </div>
 
+        {/* BOM total del proyecto (todos los cálculos guardados en el Dashboard) */}
+        {projectBomTotals.length > 0 && (
+          <div className="border-t border-white/10 pt-4">
+            <h3 className="text-lg font-semibold text-white mb-1 flex items-center gap-2 print:text-black">
+              <span className="w-1 h-5 bg-orange-500 rounded"></span>
+              BOM Total del Proyecto
+            </h3>
+            <p className="mb-3 text-xs text-slate-500 print:text-slate-600">
+              Suma de materiales de los {savedCalculations.length} cálculo(s) guardados en el Dashboard de esta sesión.
+            </p>
+            <div className="glass-panel rounded-lg p-4 bg-navy-900/30 print:bg-transparent print:border print:border-slate-300 text-sm">
+              <table className="w-full text-left">
+                <tbody>
+                  {projectBomTotals.map((item) => (
+                    <tr key={item.label} className="border-b border-white/5 last:border-0 print:border-slate-200">
+                      <td className="py-1 text-slate-300 print:text-black">{item.label}</td>
+                      <td className="py-1 text-right font-mono text-white print:text-black">{item.quantity}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
         {/* Pie de página */}
         <div className="border-t border-white/10 mt-6 pt-4 text-center text-xs text-slate-500 print:text-slate-600">
-          <p>VECTORIAL © 2026 - Motor de Cálculo de Ingeniería v2.2.0</p>
+          <p>VECTORIAL © 2026 - Motor de Cálculo de Ingeniería v2.3.0</p>
           <p className="mt-1">Documento generado el {new Date().toLocaleString('es-ES')}</p>
         </div>
       </div>

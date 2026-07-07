@@ -161,3 +161,106 @@ entre los 4 componentes de `src/components/sandbox/`.
   guardados crece.
 - Sustituir el hack de impresión por `window.print()` con una ventana/iframe
   dedicada si en el futuro se necesita paginación multi-hoja más fina.
+
+## 7. Tercera sesión — identidad visual "Density Design" y robustez
+
+Objetivo: que VECTORIAL deje de leerse como una plantilla genérica de SaaS de
+IA (glassmorphism + esquinas muy redondeadas + emojis + acento naranja
+estándar de Tailwind) y pase a sentirse como un instrumento de taller.
+
+### 7.1 Sistema de diseño (tokens, no reescritura archivo a archivo)
+
+En vez de tocar los cientos de usos de `rounded-xl`, `bg-navy-900/40` o
+`text-orange-400` repartidos por el proyecto, se sobreescribieron los
+*design tokens* de Tailwind v4 en `src/index.css` (`@theme`), que Tailwind
+resuelve en cascada sobre todas las utilidades existentes:
+
+- **Color**: `--color-navy-900: #0a2540` (azul industrial exacto pedido) y
+  `--color-orange-500: #d97706` (naranja quemado), con variantes 400/600/700/950
+  derivadas. Como `orange-500`/`navy-900` ya eran el acento y el fondo de
+  *todo* el sitio (no solo el sandbox), este cambio de 8 líneas retiñe la
+  marca completa sin tocar un componente.
+- **Radios**: `--radius-xs` a `--radius-4xl` fijados a `2px`. `rounded-full`
+  no es un token en Tailwind v4 (usa `calc(infinity * 1px)`), así que se forzó
+  aparte con `.rounded-full { border-radius: 2px !important; }` — decisión
+  deliberada: los puntos/badges circulares (incluida la insignia de estado
+  "Motor de Cálculo Activo") pasan a ser cuadrados de 2px, coherente con
+  "cero redondeo".
+- **Transiciones**: sustituido `duration-300` por `duration-100` en todo
+  `src/` (10 archivos) y `.glass-panel` pasó de `transition: all 0.3s` a
+  transiciones de color/fondo de `0.1s`.
+- Se descartó deliberadamente reescribir el *spacing* (`p-6`, `gap-4`, etc.)
+  archivo a archivo: es una auditoría de varios días sin relación directa con
+  "aura de IA", y los tokens de color/radio/velocidad ya cambian la lectura
+  del producto de forma sistemática.
+
+### 7.2 Eliminación de clichés de "SaaS de IA"
+
+- Quitado el badge con punto `animate-ping` (el "glow pulsante" es el ejemplo
+  de manual de landing genérica) por un indicador cuadrado de 2px estático.
+- Sustituidos los emojis como iconografía (🌊🔥🌡️⚙️📊 en tabs y
+  `ToolHeader`, y 📄💾⬇️🖨️ en botones) por glifos/siglas técnicas en
+  monoespaciada (`H₂O`, `GAS`, `ΔT`, `⇄`, `≡`) y texto plano en los botones
+  ("Generar informe", "Guardar en Dashboard", "Exportar JSON", "Imprimir").
+- "Engineering Sandbox" (nombre en inglés dentro de una UI en español) pasó
+  a "Sala de Cálculo".
+- Sustituido el único `alert()` nativo del código (error de dimensionado
+  inverso en `PipeFlowCalculator`) por un panel de error en línea, coherente
+  con el resto de mensajes de validación.
+
+### 7.3 Validación "Input-Safe" en tiempo real
+
+`PipeFlowCalculator` y `GasCalculator` calculan el estado de cada campo
+crítico (`ok` / `warning` / `error`) en cada pulsación, vía `useMemo`, sin
+esperar al submit:
+
+- **Diámetro**: se compara contra el rango real de diámetros interiores del
+  catálogo del material seleccionado (`MATERIAL_CATALOG[...].catalog`) — si
+  el valor introducido cae fuera de la gama comercial, el campo se pone en
+  naranja con un aviso explícito ("Fuera de gama comercial (X–Y mm)..."),
+  sin bloquear el cálculo (sigue siendo matemáticamente válido).
+- **Caudal / presión**: en rojo si no son números positivos.
+- Implementado en `src/lib/uiConstants.js` (`getInputClass(status)`), para no
+  duplicar la lógica de clases en cada componente.
+
+### 7.4 Notas de Campo (Dashboard)
+
+`calculationStore.js` gana `updateCalculationNote(id, note)`; cada entrada
+del Dashboard incluye un `<textarea>` que persiste en `localStorage` en cada
+pulsación. Pensado literalmente para el caso descrito: "Ojo: trazado
+modificado por columna".
+
+### 7.5 Error Boundary
+
+Nuevo `ToolErrorBoundary.jsx` (componente de clase — es la única forma de
+implementar un Error Boundary en React, no existe equivalente en hooks) envuelve
+la calculadora activa en `EngineeringSandbox`. Si `calculatePipeFlow` o
+cualquier otra función lanza una excepción durante el render, se muestra
+"Error de convergencia en el algoritmo de cálculo" con un botón "Reintentar",
+en vez de una pantalla en blanco.
+
+### 7.6 Dos peticiones rechazadas explícitamente (con motivo)
+
+- **"Funciones asíncronas en `engineering.js` para evitar bloqueos"**: no se
+  ha implementado. Envolver `calculatePipeFlow` o
+  `calculateInversePipeSizing` en `async/await` no libera el hilo principal:
+  siguen siendo el mismo cálculo síncrono, solo que la función devuelve una
+  promesa que se resuelve inmediatamente después de bloquear igual que antes.
+  La única forma real de evitar bloqueo en cálculo pesado es moverlo a un
+  Web Worker. No se ha hecho porque no hay cálculo pesado que lo justifique:
+  el peor caso actual (`calculateInversePipeSizing`, bisección) hace como
+  mucho 50 iteraciones de aritmética simple — microsegundos. Añadir `async`
+  aquí sería una capa de complejidad que aparenta resolver un problema que no
+  existe.
+- **"Ocultar Propano/Butano al elegir Gas Natural"**: revisado — el selector
+  de tipo de gas en `GasCalculator` ya es un `<select>` de opción única
+  (`FLUID_PRESETS` filtrado a `natural_gas`/`propane`/`butane`); nunca se
+  muestran las tres opciones simultáneamente, así que no había nada que
+  ocultar. No se ha tocado.
+
+### 7.7 Verificación
+
+`npm run lint` (oxlint) y `npm run build` (vite) limpios tras cada bloque de
+cambios. No se ha vuelto a verificar visualmente en navegador por la misma
+razón que en la sesión anterior: no hay herramienta de automatización de
+navegador disponible en este entorno de trabajo.

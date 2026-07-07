@@ -6,7 +6,7 @@ import TechnicalReport from './TechnicalReport'
 import { FLUID_PRESETS, calculatePipeFlow, calculateInversePipeSizing } from '../../lib/engineering'
 import { MATERIAL_CATALOG, getMaterial } from '../../lib/materials'
 import { estimateBillOfMaterials } from '../../lib/bom'
-import { inputClass, labelClass } from '../../lib/uiConstants'
+import { inputClass, labelClass, getInputClass } from '../../lib/uiConstants'
 import InfoTooltip from './InfoTooltip'
 
 function PipeFlowCalculator() {
@@ -22,8 +22,29 @@ function PipeFlowCalculator() {
   const [maxHeadLoss, setMaxHeadLoss] = useState('')
   const [calculationMode, setCalculationMode] = useState('direct') // 'direct' | 'inverse'
   const [showReport, setShowReport] = useState(false)
+  const [inverseError, setInverseError] = useState('')
 
   const selectedMaterial = useMemo(() => getMaterial(materialKey), [materialKey])
+
+  const diameterRange = useMemo(() => {
+    if (!selectedMaterial?.catalog?.length) return null
+    const ids = selectedMaterial.catalog.map((pipe) => pipe.id)
+    return { min: Math.min(...ids), max: Math.max(...ids) }
+  }, [selectedMaterial])
+
+  const diameterStatus = useMemo(() => {
+    if (!diameter || !diameterRange) return 'ok'
+    const value = parseFloat(diameter)
+    if (!Number.isFinite(value) || value <= 0) return 'error'
+    if (value < diameterRange.min || value > diameterRange.max) return 'warning'
+    return 'ok'
+  }, [diameter, diameterRange])
+
+  const flowStatus = useMemo(() => {
+    if (!flow) return 'ok'
+    const value = parseFloat(flow)
+    return Number.isFinite(value) && value > 0 ? 'ok' : 'error'
+  }, [flow])
 
   const bom = useMemo(() => {
     const diameterValue = parseFloat(diameter)
@@ -111,15 +132,17 @@ function PipeFlowCalculator() {
       setInverseResult(inverse)
       setDiameter(inverse.requiredDiameter.toFixed(1))
       setResult(null)
+      setInverseError('')
     } catch (error) {
-      alert(error.message)
+      setInverseError(error.message)
+      setInverseResult(null)
     }
   }
 
   return (
     <div>
       <ToolHeader
-        icon="🌊"
+        icon="H₂O"
         title="Fluidos y Tuberías"
         description="Pérdida de carga (Darcy-Weisbach) y velocidad de circulación en conducciones."
       />
@@ -195,8 +218,11 @@ function PipeFlowCalculator() {
             value={flow}
             onChange={(event) => setFlow(event.target.value)}
             placeholder="ej. 3.5"
-            className={inputClass}
+            className={getInputClass(flowStatus)}
           />
+          {flowStatus === 'error' && (
+            <p className="mt-1 text-xs text-red-400">Introducir un caudal mayor que cero.</p>
+          )}
         </div>
 
         <div className="text-left">
@@ -212,8 +238,16 @@ function PipeFlowCalculator() {
             value={diameter}
             onChange={(event) => setDiameter(event.target.value)}
             placeholder="ej. 25.4"
-            className={inputClass}
+            className={getInputClass(diameterStatus)}
           />
+          {diameterStatus === 'warning' && diameterRange && (
+            <p className="mt-1 text-xs text-orange-400">
+              Fuera de gama comercial para {selectedMaterial.name} ({diameterRange.min}–{diameterRange.max} mm). Verifique el material o el diámetro.
+            </p>
+          )}
+          {diameterStatus === 'error' && (
+            <p className="mt-1 text-xs text-red-400">Introducir un diámetro mayor que cero.</p>
+          )}
           {selectedMaterial && (
             <select
               value={diameter}
@@ -307,7 +341,7 @@ function PipeFlowCalculator() {
 
         <button
           type="submit"
-          className="glass-panel sm:col-span-2 rounded-2xl bg-orange-500 px-8 py-3 text-base font-semibold text-white shadow-xl shadow-orange-500/20 transition-all duration-300 ease-in-out hover:scale-105 hover:bg-orange-400 hover:shadow-orange-500/40"
+          className="glass-panel sm:col-span-2 rounded-2xl bg-orange-500 px-8 py-3 text-base font-semibold text-white shadow-xl shadow-orange-500/20 transition-all duration-100 ease-in-out hover:scale-105 hover:bg-orange-400 hover:shadow-orange-500/40"
         >
           Calcular
         </button>
@@ -426,11 +460,18 @@ function PipeFlowCalculator() {
 
           <button
             type="submit"
-            className="sm:col-span-2 glass-panel rounded-2xl bg-orange-500 px-8 py-3 text-base font-semibold text-white shadow-xl shadow-orange-500/20 transition-all duration-300 ease-in-out hover:scale-105 hover:bg-orange-400 hover:shadow-orange-500/40"
+            className="sm:col-span-2 glass-panel rounded-2xl bg-orange-500 px-8 py-3 text-base font-semibold text-white shadow-xl shadow-orange-500/20 transition-all duration-100 ease-in-out hover:scale-105 hover:bg-orange-400 hover:shadow-orange-500/40"
           >
             Calcular diámetro requerido
           </button>
         </form>
+      )}
+
+      {inverseError && (
+        <div className="mt-6 border border-red-500/40 bg-red-500/10 p-4 text-left">
+          <p className="text-sm font-semibold text-red-400">Error de cálculo</p>
+          <p className="mt-1 text-sm text-red-300">{inverseError}</p>
+        </div>
       )}
 
       <AnimatePresence>
@@ -518,7 +559,7 @@ function PipeFlowCalculator() {
                 onClick={() => setShowReport(!showReport)}
                 className="glass-panel px-6 py-3 rounded-xl text-sm font-semibold text-orange-400 border border-orange-500/30 hover:bg-orange-500/10 transition-all"
               >
-                {showReport ? 'Ocultar Informe' : '📄 Generar Informe Técnico'}
+                {showReport ? 'Ocultar informe' : 'Generar informe'}
               </button>
             </div>
 

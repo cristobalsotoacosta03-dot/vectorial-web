@@ -14,13 +14,13 @@ function Footer() {
           © {year} VECTORIAL. Todos los derechos reservados.
         </p>
         <div className="flex gap-6 text-sm">
-          <a href="#" className="hover:text-orange-500 transition-colors duration-300">
+          <a href="#" className="hover:text-orange-500 transition-colors duration-100">
             Aviso legal
           </a>
-          <a href="#" className="hover:text-orange-500 transition-colors duration-300">
+          <a href="#" className="hover:text-orange-500 transition-colors duration-100">
             Privacidad
           </a>
-          <a href="#" className="hover:text-orange-500 transition-colors duration-300">
+          <a href="#" className="hover:text-orange-500 transition-colors duration-100">
             Contacto
           </a>
         </div>

@@ -21,13 +21,13 @@ function CTA() {
           <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Link
               to="/sandbox"
-              className="inline-block rounded-2xl bg-orange-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-orange-500/20 transition-all duration-300 ease-in-out hover:scale-105 hover:bg-orange-400 hover:shadow-orange-500/40"
+              className="inline-block rounded-2xl bg-orange-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-orange-500/20 transition-all duration-100 ease-in-out hover:scale-105 hover:bg-orange-400 hover:shadow-orange-500/40"
             >
               Probar Engineering Sandbox
             </Link>
             <a
               href="#contacto"
-              className="glass-panel inline-block rounded-2xl border border-white/5 bg-white/5 px-8 py-4 text-base font-semibold text-white transition-all duration-300 ease-in-out hover:bg-white/10 hover:border-white/15 hover:scale-105"
+              className="glass-panel inline-block rounded-2xl border border-white/5 bg-white/5 px-8 py-4 text-base font-semibold text-white transition-all duration-100 ease-in-out hover:bg-white/10 hover:border-white/15 hover:scale-105"
             >
               Hablar con ventas
             </a>
