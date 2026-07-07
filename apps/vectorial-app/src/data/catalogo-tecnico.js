@@ -1,0 +1,531 @@
+// ─── BIBLIA DEL INSTALADOR — Base de datos técnica de referencia ──────────────
+// Categorías: Gas y Fluidos | Climatización / RITE | Electricidad / REBT |
+//             Fontanería / ACS | Obra Civil | Ventilación
+
+export const CATEGORIAS_BIBLIA = [
+  { id: 'gas',     label: 'Gas y Fluidos',        icono: '🔥', color: 'orange' },
+  { id: 'clima',   label: 'Climatización / RITE',  icono: '❄️', color: 'cyan'   },
+  { id: 'elec',    label: 'Electricidad / REBT',   icono: '⚡', color: 'yellow' },
+  { id: 'font',    label: 'Fontanería / ACS',      icono: '💧', color: 'blue'   },
+  { id: 'civil',   label: 'Obra Civil',            icono: '🏗️', color: 'stone'  },
+  { id: 'vent',    label: 'Ventilación',           icono: '🌬️', color: 'teal'   },
+]
+
+export const CATALOGO_TECNICO = [
+
+  // ═══════════════════════════════════════════════════════════════
+  // GAS Y FLUIDOS
+  // ═══════════════════════════════════════════════════════════════
+
+  { id: 1,  cat: 'gas', subcat: 'Tuberías de cobre para gas',
+    nombre: 'Tubería cobre semidura Ø10mm para gas',
+    unidad: 'ml', precio: 5.20,
+    normativa: 'UNE-EN 1057',
+    desc: 'Tubo de cobre semiduro R250 para instalaciones de gas natural y GLP en interior.',
+    notas: 'Espesor mínimo 1mm. Uniones mediante soldadura fuerte (latón-plata). No usar soldadura blanda en gas. Presión máx. servicio: 4 bar (BPN) / 0,05 bar (MOP).',
+    tags: ['cobre', 'gas', 'GLP', 'gas natural', 'DN8'] },
+
+  { id: 2,  cat: 'gas', subcat: 'Tuberías de cobre para gas',
+    nombre: 'Tubería cobre semidura Ø15mm para gas',
+    unidad: 'ml', precio: 7.20,
+    normativa: 'UNE-EN 1057',
+    desc: 'Tubo de cobre semiduro R250 para distribución de gas en viviendas y locales.',
+    notas: 'Diámetro más habitual en acometidas interiores de gas. Requiere prueba de estanqueidad a 1,5 × MOP.',
+    tags: ['cobre', 'gas', 'GLP', 'DN10', 'acometida'] },
+
+  { id: 3,  cat: 'gas', subcat: 'Tuberías de cobre para gas',
+    nombre: 'Tubería cobre semidura Ø22mm para gas',
+    unidad: 'ml', precio: 11.40,
+    normativa: 'UNE-EN 1057',
+    desc: 'Tubo cobre para distribución principal en edificios de viviendas y edificios comerciales.',
+    notas: 'Habitual en columnas montantes de gas. Soportar con abrazaderas cada 1,5m como máximo.',
+    tags: ['cobre', 'gas', 'montante', 'DN18'] },
+
+  { id: 4,  cat: 'gas', subcat: 'Tuberías de cobre para gas',
+    nombre: 'Tubería cobre semidura Ø28mm para gas',
+    unidad: 'ml', precio: 15.60,
+    normativa: 'UNE-EN 1057',
+    desc: 'Distribución de gas para edificios de gran consumo o redes de distribución secundaria.',
+    notas: 'Requiere soporte cada 2m. Proteger con pintura anticorrosión en exteriores.',
+    tags: ['cobre', 'gas', 'DN22', 'distribución'] },
+
+  { id: 5,  cat: 'gas', subcat: 'Tuberías de acero para gas',
+    nombre: 'Tubería acero negro DIN 2440 DN15 (1/2")',
+    unidad: 'ml', precio: 6.80,
+    normativa: 'UNE-EN 10255',
+    desc: 'Tubo de acero negro sin soldadura para redes de gas en baja y media presión.',
+    notas: 'Espesor nominal 2,6mm. Masa 1,21 kg/m. Uniones roscadas hasta DN50. Requiere protección anticorrosión interior y exterior. Inspección OCA obligatoria en MP.',
+    tags: ['acero', 'gas', 'negro', 'roscado', '1/2 pulgada'] },
+
+  { id: 6,  cat: 'gas', subcat: 'Tuberías de acero para gas',
+    nombre: 'Tubería acero negro DIN 2440 DN20 (3/4")',
+    unidad: 'ml', precio: 8.40,
+    normativa: 'UNE-EN 10255',
+    desc: 'Tubo de acero negro para redes de distribución de gas industrial.',
+    notas: 'Espesor nominal 2,6mm. Masa 1,68 kg/m. Habitual en instalaciones de gas industrial y hostelería.',
+    tags: ['acero', 'gas', 'negro', '3/4 pulgada', 'industrial'] },
+
+  { id: 7,  cat: 'gas', subcat: 'Tuberías de acero para gas',
+    nombre: 'Tubería acero negro DIN 2440 DN25 (1")',
+    unidad: 'ml', precio: 10.20,
+    normativa: 'UNE-EN 10255',
+    desc: 'Distribución principal de gas en naves industriales y edificios terciarios.',
+    notas: 'Espesor nominal 3,2mm. Masa 2,54 kg/m. Uniones soldadas o bridadas a partir de DN50.',
+    tags: ['acero', 'gas', 'negro', '1 pulgada', 'nave'] },
+
+  { id: 8,  cat: 'gas', subcat: 'Tuberías de acero para gas',
+    nombre: 'Tubería acero negro DIN 2440 DN50 (2")',
+    unidad: 'ml', precio: 22.50,
+    normativa: 'UNE-EN 10255',
+    desc: 'Red principal de distribución de gas en grandes instalaciones e industria.',
+    notas: 'Espesor nominal 3,6mm. Masa 5,45 kg/m. Uniones soldadas. Prueba hidráulica a 1,5 × Pmáx.',
+    tags: ['acero', 'gas', 'negro', '2 pulgadas', 'MP'] },
+
+  { id: 9,  cat: 'gas', subcat: 'Tuberías PE enterradas',
+    nombre: 'Tubería PE80 SDR11 DN32 para gas enterrado',
+    unidad: 'ml', precio: 4.20,
+    normativa: 'UNE-EN 1555-1',
+    desc: 'Tubería de polietileno PE80 para redes de gas enterradas en baja presión (MOP ≤ 4 bar).',
+    notas: 'Color amarillo (gas). Banda amarilla identificativa. Profundidad mínima de enterramiento 0,60m. Uniones por termofusión o electrofusión. Prohibido usar a la vista.',
+    tags: ['PE', 'polietileno', 'enterrado', 'gas', 'DN32', 'acometida'] },
+
+  { id: 10, cat: 'gas', subcat: 'Tuberías PE enterradas',
+    nombre: 'Tubería PE100 SDR11 DN63 para gas enterrado',
+    unidad: 'ml', precio: 8.60,
+    normativa: 'UNE-EN 1555-1',
+    desc: 'Tubería PE100 para redes de distribución de gas enterradas de mayor caudal.',
+    notas: 'MOP hasta 4 bar para PE100 SDR11. Requiere cama de arena mínimo 0,10m. Señalizar con cinta amarilla de aviso a 0,30m sobre la tubería.',
+    tags: ['PE', 'polietileno', 'enterrado', 'gas', 'DN63'] },
+
+  { id: 11, cat: 'gas', subcat: 'Aparamenta de gas',
+    nombre: 'Regulador de presión BPR doméstico (GN/GLP)',
+    unidad: 'ud', precio: 45.00,
+    normativa: 'Directiva 2016/426/UE · EN 88-1',
+    desc: 'Regulador de presión para instalación individual. Reduce MOP a presión de uso (20/25/37 mbar).',
+    notas: 'Obligatorio en toda instalación receptora. Marcado CE. Incorpora limitador de sobrepresión y válvula de seguridad por mínima presión (VSAP) si es del tipo combinado.',
+    tags: ['regulador', 'presión', 'gas', 'GLP', 'doméstico'] },
+
+  { id: 12, cat: 'gas', subcat: 'Aparamenta de gas',
+    nombre: 'Válvula esfera gas manual 3/4" (DN20)',
+    unidad: 'ud', precio: 28.00,
+    normativa: 'EN 331',
+    desc: 'Llave de corte manual tipo esfera con palanca para instalaciones de gas ≤ DN50.',
+    notas: 'Marcado CE obligatorio. Cuerpo latón estampado. Asiento PTFE. Cierre ¼ de vuelta. Presión máx. 5 bar.',
+    tags: ['válvula', 'llave', 'corte', 'gas', '3/4'] },
+
+  { id: 13, cat: 'gas', subcat: 'Aparamenta de gas',
+    nombre: 'Válvula esfera gas manual 1" (DN25)',
+    unidad: 'ud', precio: 42.00,
+    normativa: 'EN 331',
+    desc: 'Llave de corte manual para redes de distribución doméstica y comercial.',
+    notas: 'Instalar siempre en posición vertical (eje horizontal) para facilitar actuación. Identificar con cartela "GAS".',
+    tags: ['válvula', 'llave', 'corte', 'gas', '1 pulgada'] },
+
+  { id: 14, cat: 'gas', subcat: 'Depósitos GLP',
+    nombre: 'Depósito GLP aéreo 2.450 L (clase A)',
+    unidad: 'ud', precio: 3800.00,
+    normativa: 'ITC-EP 6 · RD 919/2006',
+    desc: 'Depósito superficie aéreo para almacenamiento de GLP en suministro autónomo.',
+    notas: '⚠️ DISTANCIAS MÍNIMAS (ITC-EP 6 Tabla 1): Edificios habitados: 3m | Límite parcela: 1m | Captaciones agua: 3m | Fosos/sótanos: 3m | Vía pública: 1m. Requiere homologación y revisión OCA cada 10 años.',
+    tags: ['GLP', 'propano', 'depósito', 'aéreo', 'ITC-EP6', 'distancias'] },
+
+  { id: 15, cat: 'gas', subcat: 'Depósitos GLP',
+    nombre: 'Depósito GLP enterrado 2.450 L',
+    unidad: 'ud', precio: 5200.00,
+    normativa: 'ITC-EP 6 · RD 919/2006',
+    desc: 'Depósito enterrado de GLP con protección anticorrosión catódica.',
+    notas: '⚠️ DISTANCIAS MÍNIMAS (enterrado): Edificios habitados: 1m | Captaciones agua: 3m. Ventaja sobre aéreo: menores distancias. Protección catódica obligatoria. Prueba de presión antes de puesta en servicio.',
+    tags: ['GLP', 'propano', 'depósito', 'enterrado', 'ITC-EP6', 'catódica'] },
+
+  // ═══════════════════════════════════════════════════════════════
+  // CLIMATIZACIÓN / RITE
+  // ═══════════════════════════════════════════════════════════════
+
+  { id: 16, cat: 'clima', subcat: 'Generación de calor',
+    nombre: 'Caldera de condensación mural 24 kW',
+    unidad: 'ud', precio: 1250.00,
+    normativa: 'RITE IT.1.2 · Reglamento ErP · UNE-EN 677',
+    desc: 'Caldera mural de condensación a gas para calefacción y ACS en viviendas hasta 200m².',
+    notas: 'Rendimiento estacional Pcs ≥ 92% (A). Temperatura de retorno recomendada ≤ 45°C para condensar. Evacuación de humos por Ø60/100mm coaxial. Requiere vaciado de condensados (pH 3-5, neutralizador recomendado). Mantenimiento anual obligatorio según RITE.',
+    tags: ['caldera', 'condensación', 'gas', '24kW', 'calefacción', 'ACS'] },
+
+  { id: 17, cat: 'clima', subcat: 'Generación de calor',
+    nombre: 'Caldera de condensación mural 30 kW',
+    unidad: 'ud', precio: 1480.00,
+    normativa: 'RITE IT.1.2 · Reglamento ErP · UNE-EN 677',
+    desc: 'Caldera condensación para viviendas grandes o locales comerciales pequeños.',
+    notas: 'Potencia nominal calefacción 30kW / ACS instantánea hasta 16 L/min. Conexiones 3/4" gas, 3/4" calefacción, 1/2" ACS.',
+    tags: ['caldera', 'condensación', 'gas', '30kW'] },
+
+  { id: 18, cat: 'clima', subcat: 'Bombas de calor aerotermia',
+    nombre: 'Bomba de calor aerotermia 8 kW (R32)',
+    unidad: 'ud', precio: 3200.00,
+    normativa: 'RITE IT.1.2 · UNE-EN 14511 · Reglamento F-GAS',
+    desc: 'Unidad exterior aerotérmica con depósito de inercia para calefacción + ACS.',
+    notas: 'COP ≥ 3,8 a A7/W35. SCOP ≥ 4,2 (clima templado). Refrigerante R32 (GWP=675). Temperatura de trabajo: calefacción -15°C a 55°C, ACS hasta 70°C (modo boost eléctrico). Compatibilidad con suelo radiante y fancoils.',
+    tags: ['aerotermia', 'bomba de calor', 'R32', '8kW', 'ACS', 'suelo radiante'] },
+
+  { id: 19, cat: 'clima', subcat: 'Bombas de calor aerotermia',
+    nombre: 'Bomba de calor aerotermia 16 kW (R32)',
+    unidad: 'ud', precio: 5600.00,
+    normativa: 'RITE IT.1.2 · UNE-EN 14511 · Reglamento F-GAS',
+    desc: 'Unidad aerotérmica para edificios terciarios o viviendas unifamiliares grandes.',
+    notas: 'Trifásica 400V. COP ≥ 3,5 a A7/W35. Caudal mínimo agua: 1.800 L/h. Vaso de expansión y grupo de seguridad hidráulica incluidos.',
+    tags: ['aerotermia', 'bomba de calor', 'R32', '16kW', 'trifásica'] },
+
+  { id: 20, cat: 'clima', subcat: 'Splits y Multisplits',
+    nombre: 'Unidad interior split pared 2.500 frig. (R32)',
+    unidad: 'ud', precio: 380.00,
+    normativa: 'RITE IT.1.2 · UNE-EN 14511 · Reglamento F-GAS',
+    desc: 'Unidad interior para sistema split de pared. Refrigeración y calefacción.',
+    notas: 'Clase energética mín. A+ en frío/calor. Caudal aire nominal 450 m³/h. Nivel sonoro ≤ 32 dB(A). Filtros HEPA opcionales. Condensados por gravedad o con bomba.',
+    tags: ['split', 'aire acondicionado', '2500 frigorías', 'R32', 'pared'] },
+
+  { id: 21, cat: 'clima', subcat: 'Splits y Multisplits',
+    nombre: 'Unidad interior split pared 5.000 frig. (R32)',
+    unidad: 'ud', precio: 720.00,
+    normativa: 'RITE IT.1.2 · UNE-EN 14511',
+    desc: 'Unidad interior para locales comerciales y oficinas hasta 50m².',
+    notas: 'Caudal aire nominal 1.100 m³/h. Conexión eléctrica monofásica. Requiere soporte mural reforzado ≥ 8kg.',
+    tags: ['split', 'aire acondicionado', '5000 frigorías', 'R32', 'comercial'] },
+
+  { id: 22, cat: 'clima', subcat: 'Fancoils',
+    nombre: 'Fancoil horizontal 2 tubos 2.500 frig.',
+    unidad: 'ud', precio: 480.00,
+    normativa: 'UNE-EN 1360 · RITE',
+    desc: 'Terminal hidráulico horizontal para climatización por agua fría/caliente en falso techo.',
+    notas: 'Conexiones hidráulicas 3/4". Caudal agua nominal 0,43 L/s. Válvula de 3 vías motorizada recomendada. Requiere bandeja de condensados con drenaje y purga de aire automática.',
+    tags: ['fancoil', '2 tubos', 'hidráulico', 'techo', '2500'] },
+
+  { id: 23, cat: 'clima', subcat: 'Aislamiento RITE',
+    nombre: 'Coquilla elastomérica Ø22mm · espesor 30mm',
+    unidad: 'ml', precio: 3.80,
+    normativa: 'RITE IT.1.2.4.2 · UNE-EN ISO 10456',
+    desc: 'Aislamiento para tuberías de calefacción y refrigeración en interior.',
+    notas: '⚠️ ESPESOR MÍNIMO RITE (IT 1.2.4.2.1): fluido 40-60°C / Ø≤35mm → 25mm. fluido >60°C / Ø≤35mm → 30mm. fluido ≤35°C (frío) / Ø≤35mm → 30mm. Lambda ≤ 0,040 W/mK. Autoextinguible M1.',
+    tags: ['aislamiento', 'coquilla', 'RITE', 'calefacción', 'DN22'] },
+
+  { id: 24, cat: 'clima', subcat: 'Aislamiento RITE',
+    nombre: 'Coquilla elastomérica Ø35mm · espesor 40mm',
+    unidad: 'ml', precio: 5.20,
+    normativa: 'RITE IT.1.2.4.2',
+    desc: 'Aislamiento para tuberías de calefacción Ø35-60mm con temperatura > 60°C.',
+    notas: 'Espesor mínimo RITE: fluido >60°C / Ø35-60mm → 40mm. Fluido 40-60°C → 30mm. Temperatura de trabajo: -40°C a +105°C.',
+    tags: ['aislamiento', 'coquilla', 'RITE', 'DN35', 'alta temperatura'] },
+
+  { id: 25, cat: 'clima', subcat: 'Conductos y distribución',
+    nombre: 'Conducto lana de vidrio AF/Alu 25mm (0,6m de alto)',
+    unidad: 'm²', precio: 18.00,
+    normativa: 'RITE IT.1.2.4 · UNE-EN 13403',
+    desc: 'Panel de lana de vidrio con aluminio para conductos de ventilación y climatización.',
+    notas: 'Clasificación fuego: A2-s1,d0. Presión máx.: 500 Pa (baja velocidad). No usar en extracción de cocinas o aparcamientos. Sellar juntas con cinta de aluminio adhesivo.',
+    tags: ['conducto', 'lana de vidrio', 'ventilación', 'HVAC', 'AF/Alu'] },
+
+  { id: 26, cat: 'clima', subcat: 'Conductos y distribución',
+    nombre: 'Conducto chapa galvanizada 400×200mm',
+    unidad: 'ml', precio: 28.00,
+    normativa: 'UNE-EN 1506 · RITE',
+    desc: 'Conducto rectangular de chapa galvanizada para instalaciones de climatización y ventilación.',
+    notas: 'Espesor chapa según presión: ≤500Pa → 0,6mm; 500-1000Pa → 0,8mm; >1000Pa → 1,0mm. Clase de estanqueidad mínima B (RITE). Soportar cada 2m máximo.',
+    tags: ['conducto', 'chapa', 'galvanizado', 'rectangular', 'HVAC'] },
+
+  { id: 27, cat: 'clima', subcat: 'Control y regulación',
+    nombre: 'Termostato programable Wi-Fi 7 días',
+    unidad: 'ud', precio: 85.00,
+    normativa: 'RITE IT.1.1.4.1 · UNE-EN 15232',
+    desc: 'Termostato de ambiente programable con control por aplicación móvil.',
+    notas: 'RITE exige control automático de temperatura en toda instalación de calefacción. Ahorro energético estimado 15-20% frente a termostato ON/OFF. Compatible con calderas y bombas de calor mediante protocolo OpenTherm.',
+    tags: ['termostato', 'programable', 'wifi', 'control', 'RITE'] },
+
+  // ═══════════════════════════════════════════════════════════════
+  // ELECTRICIDAD / REBT
+  // ═══════════════════════════════════════════════════════════════
+
+  { id: 28, cat: 'elec', subcat: 'Cables H07V-K (interior)',
+    nombre: 'Cable H07V-K 1,5mm² 450/750V',
+    unidad: 'ml', precio: 0.45,
+    normativa: 'REBT ITC-BT-19 · UNE-EN 50525-2-31',
+    desc: 'Conductor unipolar flexible con aislamiento PVC para instalaciones interiores.',
+    notas: '⚠️ USO EXCLUSIVO bajo tubo o canal. Sección mínima REBT: iluminación → 1,5mm². Capacidad máx. 16A (bajo tubo empotrado). No usar en instalaciones al aire libre ni en zonas húmedas sin protección adicional.',
+    tags: ['cable', 'H07V-K', '1.5mm2', 'iluminación', 'interior'] },
+
+  { id: 29, cat: 'elec', subcat: 'Cables H07V-K (interior)',
+    nombre: 'Cable H07V-K 2,5mm² 450/750V',
+    unidad: 'ml', precio: 0.72,
+    normativa: 'REBT ITC-BT-19 · UNE-EN 50525-2-31',
+    desc: 'Conductor para tomas de corriente de uso general y circuitos de pequeños aparatos.',
+    notas: 'Sección mínima REBT para bases ≤16A: 2,5mm². Proteger con PIA 16A curva C. Capacidad máx: 20A bajo tubo empotrado. Caída de tensión máx. 3% en circuito interior.',
+    tags: ['cable', 'H07V-K', '2.5mm2', 'tomas', 'interior'] },
+
+  { id: 30, cat: 'elec', subcat: 'Cables H07V-K (interior)',
+    nombre: 'Cable H07V-K 6mm² 450/750V',
+    unidad: 'ml', precio: 1.65,
+    normativa: 'REBT ITC-BT-19',
+    desc: 'Conductor para circuitos de cocina, horno y electrodomésticos de alta potencia.',
+    notas: 'Sección mínima REBT circuito horno/vitro: 6mm². Proteger con PIA 25-32A. Capacidad 36A bajo tubo empotrado. En vivienda un circuito exclusivo para horno y otro para vitrocerámica (ambos 6mm²).',
+    tags: ['cable', 'H07V-K', '6mm2', 'cocina', 'horno'] },
+
+  { id: 31, cat: 'elec', subcat: 'Cables H07V-K (interior)',
+    nombre: 'Cable H07V-K 10mm² 450/750V',
+    unidad: 'ml', precio: 2.80,
+    normativa: 'REBT ITC-BT-19',
+    desc: 'Conductor para circuitos de aire acondicionado y tomas trifásicas industriales.',
+    notas: 'Circuito A/A ITC-BT-25: sección mínima 6mm² (proteger con 25A). Usar 10mm² para equipos ≥5.000W monofásicos. Capacidad 52A bajo tubo empotrado.',
+    tags: ['cable', 'H07V-K', '10mm2', 'aire acondicionado', 'trifásico'] },
+
+  { id: 32, cat: 'elec', subcat: 'Cables RZ1-K (fuerza)',
+    nombre: 'Cable RZ1-K 0,6/1kV 3G2,5mm²',
+    unidad: 'ml', precio: 1.90,
+    normativa: 'REBT · UNE-EN 60502-1 · UNE 21123-4',
+    desc: 'Cable multipolar libre de halógenos para acometidas interiores y cuadros eléctricos.',
+    notas: 'Libre de halógenos (LS0H). Emisión de humos reducida. Obligatorio en túneles, garajes y edificios de pública concurrencia según CTE. Conductor flexible clase 5. Tensión de prueba: 4kV.',
+    tags: ['RZ1-K', 'libre de halógenos', 'fuerza', '2.5mm2', 'cuadro'] },
+
+  { id: 33, cat: 'elec', subcat: 'Cables RZ1-K (fuerza)',
+    nombre: 'Cable RZ1-K 0,6/1kV 3G6mm²',
+    unidad: 'ml', precio: 4.20,
+    normativa: 'UNE-EN 60502-1',
+    desc: 'Cable LS0H para alimentación de motores, bombas y equipos de climatización.',
+    notas: 'Temperatura máx. conductor: 90°C. Capacidad en bandeja: 46A. Sección típica para motores hasta 4kW monofásico o 7,5kW trifásico.',
+    tags: ['RZ1-K', 'libre de halógenos', 'motor', '6mm2', 'bomba'] },
+
+  { id: 34, cat: 'elec', subcat: 'Cables RZ1-K (fuerza)',
+    nombre: 'Cable RZ1-K 0,6/1kV 4G16mm²',
+    unidad: 'ml', precio: 9.80,
+    normativa: 'UNE-EN 60502-1',
+    desc: 'Cable trifásico + neutro para alimentación de cuadros secundarios y grandes equipos.',
+    notas: 'Capacidad en bandeja: 85A. Para motores trifásicos hasta 18,5kW. Requiere terminal compresión en extremos.',
+    tags: ['RZ1-K', 'trifásico', '16mm2', 'cuadro secundario'] },
+
+  { id: 35, cat: 'elec', subcat: 'Protecciones',
+    nombre: 'PIA 1P+N 10A Curva C (6kA)',
+    unidad: 'ud', precio: 12.00,
+    normativa: 'REBT ITC-BT-17 · UNE-EN 60898-1',
+    desc: 'Pequeño interruptor automático para protección de circuito de iluminación.',
+    notas: 'Curva C para cargas resistivas e inductivas normales. Poder de corte 6kA. Para iluminación usar PIA 10A. Instalar en cuadro general de protección (CGP) o cuadro individual (CI).',
+    tags: ['PIA', 'automático', '10A', 'curva C', 'iluminación', 'ITC-BT-17'] },
+
+  { id: 36, cat: 'elec', subcat: 'Protecciones',
+    nombre: 'PIA 1P+N 16A Curva C (6kA)',
+    unidad: 'ud', precio: 14.00,
+    normativa: 'REBT ITC-BT-17 · UNE-EN 60898-1',
+    desc: 'Protección para circuitos de tomas de uso general (bases ≤ 16A).',
+    notas: 'Es la protección estándar para circuitos C2 (bases uso general) según ITC-BT-25. Disparo magnético entre 5×In y 10×In.',
+    tags: ['PIA', 'automático', '16A', 'curva C', 'tomas', 'ITC-BT-25'] },
+
+  { id: 37, cat: 'elec', subcat: 'Protecciones',
+    nombre: 'PIA 1P+N 25A Curva C (6kA)',
+    unidad: 'ud', precio: 18.00,
+    normativa: 'REBT ITC-BT-17 · UNE-EN 60898-1',
+    desc: 'Protección para circuitos de cocina, lavadora, lavavajillas y A/A.',
+    notas: 'Circuitos C3 (cocina/horno), C4 (lavadora) y C5 (baño+cocina) según ITC-BT-25: proteger con 25A. Para A/A (C9): 25A con cable 6mm².',
+    tags: ['PIA', 'automático', '25A', 'curva C', 'cocina', 'lavadora'] },
+
+  { id: 38, cat: 'elec', subcat: 'Protecciones',
+    nombre: 'Interruptor diferencial 2P 25A 30mA AC',
+    unidad: 'ud', precio: 38.00,
+    normativa: 'REBT ITC-BT-24 · UNE-EN 61008-1',
+    desc: 'Diferencial tipo AC para protección de personas contra contactos indirectos.',
+    notas: '⚠️ Sensibilidad 30mA obligatoria para viviendas (ITC-BT-24). Tipo AC: corrientes alternas sinusoidales. Usar tipo A o F si hay circuitos con electrónica de potencia (inversores, A/A inverter, cargadores VE). Probar mensualmente mediante botón TEST.',
+    tags: ['diferencial', 'ID', '25A', '30mA', 'protección personas', 'ITC-BT-24'] },
+
+  { id: 39, cat: 'elec', subcat: 'Protecciones',
+    nombre: 'Interruptor diferencial 4P 40A 300mA',
+    unidad: 'ud', precio: 95.00,
+    normativa: 'REBT · UNE-EN 61008-1',
+    desc: 'Diferencial tetrapolar para protección de líneas de distribución trifásica.',
+    notas: 'Sensibilidad 300mA = diferencial de cabecera (selectivo). Para uso en instalaciones industriales donde se busca selectividad frente a diferenciales de 30mA en circuitos terminales.',
+    tags: ['diferencial', 'tetrapolar', '4P', '40A', '300mA', 'trifásico', 'industrial'] },
+
+  { id: 40, cat: 'elec', subcat: 'Canalizaciones',
+    nombre: 'Tubo corrugado PVC Ø20mm (doble pared)',
+    unidad: 'ml', precio: 0.28,
+    normativa: 'REBT ITC-BT-21 · UNE-EN 61386-1',
+    desc: 'Tubo corrugado para instalaciones eléctricas empotradas en tabique o losa.',
+    notas: 'Admite hasta 3 cables 1,5mm² o 2 cables 2,5mm². Para empotrar en paredes: resistencia a la compresión ≥ 750N. No usar en zonas con temperatura > 60°C.',
+    tags: ['tubo corrugado', 'PVC', '20mm', 'empotrado', 'ITC-BT-21'] },
+
+  { id: 41, cat: 'elec', subcat: 'Canalizaciones',
+    nombre: 'Tubo corrugado PVC Ø32mm (doble pared)',
+    unidad: 'ml', precio: 0.55,
+    normativa: 'REBT ITC-BT-21 · UNE-EN 61386-1',
+    desc: 'Tubo corrugado de mayor diámetro para líneas de distribución o agrupación de circuitos.',
+    notas: 'Admite hasta 3 cables 6mm² o 5 cables 2,5mm². Para suelos: resistencia ≥ 1.250N. Curva de radio mínimo = 6×D.',
+    tags: ['tubo corrugado', 'PVC', '32mm', 'distribución'] },
+
+  // ═══════════════════════════════════════════════════════════════
+  // FONTANERÍA / ACS
+  // ═══════════════════════════════════════════════════════════════
+
+  { id: 42, cat: 'font', subcat: 'Tuberías de cobre ACS',
+    nombre: 'Tubería cobre semidura Ø15mm (ACS/calefacción)',
+    unidad: 'ml', precio: 5.80,
+    normativa: 'UNE-EN 1057 · CTE HS-4 · RITE',
+    desc: 'Tubería de cobre para instalaciones de agua fría, ACS y calefacción.',
+    notas: 'Temperatura máx. servicio: 110°C. Presión máx.: 10 bar. Uniones mediante soldadura capilar con aleación Cu-Ag o fitting de compresión. Aislar ACS según RITE (IT.1.2.4.2.1): 20mm para T≤60°C en local no calefactado.',
+    tags: ['cobre', 'ACS', 'calefacción', 'DN12', 'Ø15'] },
+
+  { id: 43, cat: 'font', subcat: 'Tuberías de cobre ACS',
+    nombre: 'Tubería cobre semidura Ø22mm (ACS/calefacción)',
+    unidad: 'ml', precio: 9.20,
+    normativa: 'UNE-EN 1057',
+    desc: 'Distribución secundaria de ACS y calefacción en edificios.',
+    notas: 'Velocidad recomendada ACS: 0,5-1,5 m/s. Soporte cada 1,5m en horizontal. Pendiente mínima hacia purgas: 0,2%.',
+    tags: ['cobre', 'ACS', 'calefacción', 'Ø22', 'distribución'] },
+
+  { id: 44, cat: 'font', subcat: 'Tuberías multicapa',
+    nombre: 'Tubería multicapa Al-PE Ø16×2mm',
+    unidad: 'ml', precio: 2.80,
+    normativa: 'UNE-EN ISO 21003 · CTE HS-4',
+    desc: 'Tubo multicapa aluminio-polietileno para agua fría, ACS y calefacción por suelo radiante.',
+    notas: 'Temperatura máx.: 95°C (punta 110°C). Presión máx.: 10 bar. Coeficiente de dilatación 10× menor que PVC. Barrera de oxígeno integrada (EVOH). No necesita compensadores de dilatación hasta 5m.',
+    tags: ['multicapa', 'aluminio', 'PE', 'suelo radiante', 'ACS', 'Ø16'] },
+
+  { id: 45, cat: 'font', subcat: 'Tuberías multicapa',
+    nombre: 'Tubería multicapa Al-PE Ø20×2mm',
+    unidad: 'ml', precio: 3.50,
+    normativa: 'UNE-EN ISO 21003',
+    desc: 'Distribución de ACS y calefacción de baja temperatura. Muy habitual en reformas.',
+    notas: 'Caudal a 1m/s: 250 L/h. Compatible con fittings de compresión y de presión. Verificar compatibilidad de fitting con el fabricante del tubo.',
+    tags: ['multicapa', 'Ø20', 'ACS', 'reforma'] },
+
+  { id: 46, cat: 'font', subcat: 'Aparamenta de fontanería',
+    nombre: 'Válvula de bola latón 3/4" full bore',
+    unidad: 'ud', precio: 6.80,
+    normativa: 'UNE-EN 13828',
+    desc: 'Llave de corte de paso total para instalaciones de agua fría y ACS.',
+    notas: 'Full bore: sin pérdida de carga. Cuerpo latón. Asiento PTFE. Temperatura máx. 90°C. Presión máx. 16 bar. Instalar al inicio de cada ramal para sectorizar.',
+    tags: ['válvula', 'bola', 'latón', '3/4', 'agua', 'corte'] },
+
+  { id: 47, cat: 'font', subcat: 'Aparamenta de fontanería',
+    nombre: 'Válvula de seguridad 6 bar 1/2"',
+    unidad: 'ud', precio: 14.00,
+    normativa: 'UNE-EN 1490 · CTE HS-4',
+    desc: 'Válvula de seguridad para protección de acumuladores y circuitos cerrados.',
+    notas: '⚠️ OBLIGATORIA en todo acumulador eléctrico o de ACS. Taraje 6 bar para ACS doméstica. Conectar descarga a embudo de suelo o desagüe visible. Verificar apertura anualmente.',
+    tags: ['válvula seguridad', 'seguridad', '6bar', 'ACS', 'acumulador'] },
+
+  { id: 48, cat: 'font', subcat: 'Producción ACS',
+    nombre: 'Acumulador eléctrico ACS 100 L',
+    unidad: 'ud', precio: 280.00,
+    normativa: 'UNE-EN 60335-2-21 · CTE HS-4 · RITE',
+    desc: 'Calentador de agua eléctrico de acumulación para producción de ACS doméstica.',
+    notas: '⚠️ LEGIONELA: mantener acumulación ≥ 60°C y distribución ≥ 50°C (RD 865/2003). En viviendas unifamiliares: desinfección anual. Verificar ánodo de magnesio cada 2 años.',
+    tags: ['acumulador', 'ACS', 'eléctrico', '100L', 'legionela'] },
+
+  // ═══════════════════════════════════════════════════════════════
+  // OBRA CIVIL
+  // ═══════════════════════════════════════════════════════════════
+
+  { id: 49, cat: 'civil', subcat: 'Excavación y zanjas',
+    nombre: 'Zanja para tubería enterrada DN ≤ 200mm',
+    unidad: 'm³', precio: 18.00,
+    normativa: 'NTE-ADZ · Pliego de Condiciones tipo',
+    desc: 'Excavación de zanja para conducciones enterradas en terreno medio.',
+    notas: '⚠️ DIMENSIONES MÍNIMAS: Anchura = DN + 0,40m (mín. 0,60m). Profundidad sobre generatriz superior: 0,80m en zona de tráfico / 0,60m en zona sin tráfico. Entibación obligatoria en zanjas >1,30m de profundidad o terreno inestable (RD 1627/1997).',
+    tags: ['zanja', 'excavación', 'enterrada', 'profundidad', 'obra civil'] },
+
+  { id: 50, cat: 'civil', subcat: 'Excavación y zanjas',
+    nombre: 'Cama de arena lavada bajo tubería',
+    unidad: 'm³', precio: 22.00,
+    normativa: 'NTE-IFA · UNE-EN 1610',
+    desc: 'Lecho de arena lavada para apoyo y protección de tuberías enterradas.',
+    notas: 'Espesor mínimo bajo la tubería: 0,10m. El relleno inicial (0,30m sobre generatriz) también en arena o material granular fino sin piedras > 20mm. No usar tierra con gravas o escombros en contacto con la tubería.',
+    tags: ['arena', 'cama', 'relleno', 'tubería enterrada', 'lecho'] },
+
+  { id: 51, cat: 'civil', subcat: 'Elementos prefabricados',
+    nombre: 'Arqueta registro polipropileno 40×40×40cm',
+    unidad: 'ud', precio: 28.00,
+    normativa: 'UNE-EN 13598-1',
+    desc: 'Arqueta de registro para instalaciones enterradas de agua, gas o telecomunicaciones.',
+    notas: 'Resistencia mínima carga: clase A15 (paso peatonal). Para paso de vehículos: clase C250 o D400. Profundidad útil interior 40cm. Instalar con junta estanca si es zona de nivel freático alto.',
+    tags: ['arqueta', 'registro', 'polipropileno', 'enterrado'] },
+
+  { id: 52, cat: 'civil', subcat: 'Elementos prefabricados',
+    nombre: 'Tapa arqueta fundición D400 (400×400mm)',
+    unidad: 'ud', precio: 42.00,
+    normativa: 'UNE-EN 124',
+    desc: 'Tapa de fundición nodular para arquetas en calzada con paso de vehículos pesados.',
+    notas: 'Clase D400 = 40 toneladas. Clase C250 para aparcamientos (25t). Clase B125 para aceras (12,5t). Gravada con clase de carga y marca CE. Enrasar con pavimento existente ±5mm.',
+    tags: ['tapa', 'fundición', 'arqueta', 'calzada', 'D400'] },
+
+  { id: 53, cat: 'civil', subcat: 'Señalización y protección',
+    nombre: 'Cinta señalizadora tuberías gas (amarilla)',
+    unidad: 'ml', precio: 0.15,
+    normativa: 'UNE-EN 12613',
+    desc: 'Cinta plástica de aviso sobre tuberías de gas enterradas.',
+    notas: 'Color AMARILLO = gas (UNE-EN 12613). Color AZUL = agua potable. Color ROJO = electricidad. Color VERDE = telecomunicaciones. Colocar a 0,30m sobre la generatriz superior de la tubería.',
+    tags: ['cinta', 'señalizadora', 'gas', 'amarilla', 'enterrado'] },
+
+  { id: 54, cat: 'civil', subcat: 'Señalización y protección',
+    nombre: 'Cinta señalizadora tuberías agua (azul)',
+    unidad: 'ml', precio: 0.15,
+    normativa: 'UNE-EN 12613',
+    desc: 'Cinta plástica de aviso sobre tuberías de agua potable enterradas.',
+    notas: 'Instalar a 30cm sobre generatriz superior. Anchura mínima 150mm para tuberías DN>200mm. Texto impreso: "ATENCIÓN TUBERÍA DE AGUA" o similar.',
+    tags: ['cinta', 'señalizadora', 'agua', 'azul', 'enterrado'] },
+
+  { id: 55, cat: 'civil', subcat: 'Tuberías enterradas de agua',
+    nombre: 'Tubería PE100 PN10 DN110 para agua',
+    unidad: 'ml', precio: 12.50,
+    normativa: 'UNE-EN 12201-2 · CTE HS-4',
+    desc: 'Tubería de polietileno de alta densidad para redes de distribución de agua enterradas.',
+    notas: 'Color negro con banda azul (agua potable). SDR17. Presión máx. trabajo: 10 bar. Temperatura máx.: 25°C continuos. Uniones por termofusión o electrofusión. Resistencia a cloro y UV.',
+    tags: ['PE100', 'agua', 'enterrado', 'DN110', 'PN10', 'abastecimiento'] },
+
+  // ═══════════════════════════════════════════════════════════════
+  // VENTILACIÓN
+  // ═══════════════════════════════════════════════════════════════
+
+  { id: 56, cat: 'vent', subcat: 'Ventilación mecánica',
+    nombre: 'Ventilador helicocentrífugo 1.500 m³/h',
+    unidad: 'ud', precio: 280.00,
+    normativa: 'RITE IT.1.1.4 · CTE HS-3 · UNE-EN 13779',
+    desc: 'Ventilador para extracción o impulsión en sistemas de ventilación mecánica.',
+    notas: '⚠️ CAUDALES MÍNIMOS RITE IDA (IT 1.1.4.2.3): IDA1 hospital: 12,5 L/s·pers. IDA2 oficinas: 12,5 L/s·pers. IDA3 comercial: 8 L/s·pers. IDA4: 5 L/s·pers. CTE HS-3 viviendas: baño húmedo 15 L/s, cocina 50 L/s.',
+    tags: ['ventilador', 'extracción', 'RITE', 'caudal', 'IDA'] },
+
+  { id: 57, cat: 'vent', subcat: 'Ventilación mecánica',
+    nombre: 'Recuperador de calor 500 m³/h (η≥80%)',
+    unidad: 'ud', precio: 1450.00,
+    normativa: 'RITE IT.1.2.4.5 · UNE-EN 308',
+    desc: 'Unidad de recuperación de calor para ventilación con intercambiador de flujo cruzado.',
+    notas: '⚠️ RITE OBLIGA recuperación calor cuando Q ≥ 0,5 m³/s y horas de funcionamiento > 1.000 h/año. Eficiencia mínima según IT 1.2.4.5.2: η ≥ 70% (zona climática D y E), η ≥ 65% (resto). Bypasseable en verano.',
+    tags: ['recuperador', 'calor', 'VRE', 'ventilación', 'eficiencia', 'RITE'] },
+
+  { id: 58, cat: 'vent', subcat: 'Detección y seguridad',
+    nombre: 'Detector CO₂ analógico 0-5.000 ppm',
+    unidad: 'ud', precio: 185.00,
+    normativa: 'UNE-EN 50545-1 · RITE IT.1.1.4.2.5',
+    desc: 'Sensor de CO₂ para control de ventilación por demanda en locales con ocupación variable.',
+    notas: 'Umbral alarma: 800 ppm (inicio ventilación), 1.000 ppm (ventilación máx.), 5.000 ppm (alarma). El RITE permite reducir caudal de ventilación hasta 25% cuando CO₂ < 800 ppm. Calibrar cada 2 años.',
+    tags: ['CO2', 'detector', 'ventilación demanda', 'RITE', 'calidad aire'] },
+
+  { id: 59, cat: 'vent', subcat: 'Detección y seguridad',
+    nombre: 'Detector CO para aparcamiento (0-300 ppm)',
+    unidad: 'ud', precio: 340.00,
+    normativa: 'UNE-EN 50545-1 · RITE · CTE SI',
+    desc: 'Detector de monóxido de carbono para aparcamientos con ventilación mecánica.',
+    notas: '⚠️ CTE-SI: OBLIGATORIO en aparcamientos >500m². Sistema activación automática de ventilación. Umbrales: Nivel 1 (alarma) 50 ppm, Nivel 2 (ventilación 100%) 100 ppm. Verificar mensualmente.',
+    tags: ['CO', 'monóxido', 'aparcamiento', 'detector', 'CTE-SI'] },
+
+  { id: 60, cat: 'vent', subcat: 'Distribución de aire',
+    nombre: 'Difusor rotacional circular Ø300mm',
+    unidad: 'ud', precio: 45.00,
+    normativa: 'RITE · UNE-EN ISO 5219',
+    desc: 'Difusor de techo de alta inducción para distribución de aire en locales.',
+    notas: 'Caudal nominal 200-500 m³/h. Velocidad residual en zona ocupada ≤ 0,25 m/s (confort RITE). Temperatura de impulsión máx. diferencial ΔT=10°C para evitar estratificación. Distancia mínima a pared 1,5m.',
+    tags: ['difusor', 'aire', 'techo', 'climatización', 'RITE', 'confort'] },
+]
+
+// Función de búsqueda potente sobre todo el catálogo
+export function buscarEnCatalogo(termino, categoriaId) {
+  const t = termino.toLowerCase().trim()
+  return CATALOGO_TECNICO.filter(item => {
+    const matchCat = !categoriaId || item.cat === categoriaId
+    if (!t) return matchCat
+    const haystack = [item.nombre, item.desc, item.normativa, item.notas, ...(item.tags || []), item.subcat]
+      .join(' ').toLowerCase()
+    return matchCat && haystack.includes(t)
+  })
+}

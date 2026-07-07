@@ -1,0 +1,44 @@
+{
+  "generado": "2026-06-30T06:37:03.758Z",
+  "totalDocumentos": 2,
+  "porCategoria": {
+    "normativas": [
+      {
+        "titulo": "Cálculo de Secciones de Cable según UNE EN 60364-5-52",
+        "ruta": "docs\\referencia\\normativas\\UNE-EN-60364-5-52.md"
+      }
+    ],
+    "referencia": [
+      {
+        "titulo": "Documentación de Referencia Técnica",
+        "ruta": "docs\\referencia\\README.md"
+      }
+    ]
+  },
+  "documentos": [
+    {
+      "titulo": "Cálculo de Secciones de Cable según UNE EN 60364-5-52",
+      "tipo": "markdown",
+      "categoria": "normativas",
+      "ruta": "docs\\referencia\\normativas\\UNE-EN-60364-5-52.md",
+      "referencias": [
+        "rite",
+        "ITC-",
+        "REBT"
+      ],
+      "numSecciones": 9
+    },
+    {
+      "titulo": "Documentación de Referencia Técnica",
+      "tipo": "markdown",
+      "categoria": "referencia",
+      "ruta": "docs\\referencia\\README.md",
+      "referencias": [
+        "RITE",
+        "CTE",
+        "UNE 12345:2020"
+      ],
+      "numSecciones": 7
+    }
+  ]
+}
