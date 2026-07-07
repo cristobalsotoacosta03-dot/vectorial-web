@@ -1,0 +1,134 @@
+# Reglas de Trabajo para GestiObra
+# Este archivo configura el comportamiento del asistente Cline en este proyecto
+
+## 1. PRIORIZACIÓN DE DOCUMENTACIÓN TÉCNICA
+
+### 1.1 Jerarquía de fuentes
+Cuando el usuario solicite cálculos, diseños o implementaciones relacionadas con:
+- Instalaciones eléctricas (baja tensión, alumbrado, fuerza)
+- Climatización y ventilación (RITE)
+- Fontanería y saneamiento
+- Gas (GLP, gas natural)
+- Cumplimiento normativo (UNE, RITE, CTE, REBT, ITC)
+
+**ORDEN DE PRIORIDAD:**
+1. **docs/referencia/** - Documentación exportada de NotebookLM (MÁXIMA PRIORIDAD)
+2. **src/data/catalogo-tecnico.js** - Catálogo técnico del proyecto
+3. Conocimiento general de normativas
+4. Mejores prácticas estándar
+
+### 1.2 Acceso a documentación
+ANTES de generar cualquier código relacionado con ingeniería:
+1. Leer archivos relevantes en docs/referencia/normativas/
+2. Consultar docs/output/contexto-tecnico.md (si existe, generado por npm run ingest:docs)
+3. Verificar docs/output/indice.json para localizar documentos específicos
+4. SOLO DESPUÉS proceder con la implementación
+
+### 1.3 Formato de respuesta para consultas normativas
+Cuando se pregunte sobre normativas:
+```
+📚 FUENTE: [Nombre del documento en docs/referencia/]
+📋 REFERENCIA: [UNE-XXX, RITE-XXX, etc.]
+📝 EXTRACTO: [Cita textual o paráfrasis fiel del documento]
+✅ APLICACIÓN: [Cómo se aplica a este proyecto]
+```
+
+## 2. VALIDACIÓN DE CÁLCULOS
+
+### 2.1 Cálculos eléctricos
+- Aplicar estrictamente UNE EN 60364 y REBT
+- Usar factores de demanda según normativa
+- Verificar secciones de cable según intensidad y caída de tensión
+- Incluir protecciones magnetotérmicas y diferenciales según ITC-BT
+
+### 2.2 Cálculos de climatización
+- Seguir RITE 2023 (o última versión en docs/referencia/)
+- Cálculo de cargas térmicas según método oficial
+- Dimensionamiento de equipos con margen de seguridad
+- Verificar rendimientos estacionales y COP
+
+### 2.3 Cálculos de fontanería
+- Diámetros según UNE EN 806
+- Pérdidas de carga con coeficientes de fricción actualizados
+- Dimensionamiento de ACS según RITE y CTE DB-HS
+
+## 3. ESTRUCTURA DE CÓDIGO
+
+### 3.1 Componentes de cálculo
+- Usar hooks personalizados en src/hooks/useCalculos.js
+- Separar lógica de cálculo de presentación
+- Incluir validaciones con mensajes de error específicos
+- Documentar fórmulas utilizadas en comentarios
+
+### 3.2 Datos técnicos
+- Centralizar en src/data/catalogo-tecnico.js
+- No hardcodear valores de normativas en componentes
+- Usar constantes con nombres descriptivos
+
+## 4. DOCUMENTACIÓN
+
+### 4.1 Comentarios en código
+Para fórmulas de normativa:
+```javascript
+// [UNE EN 60364-5-52] Sección mínima por intensidad
+// I_n = 16A → Cable 2.5mm² (cobre, instalación empotrada)
+const seccionMinima = 2.5;
+```
+
+### 4.2 Actualización de docs/referencia
+Si se detecta información obsoleta:
+1. Señalarlo claramente al usuario
+2. Sugerir actualización del documento en NotebookLM
+3. No modificar archivos en docs/referencia/ directamente
+4. El usuario es responsable de mantener la documentación actualizada
+
+## 5. WORKFLOW DE DESARROLLO
+
+### 5.1 Antes de implementar
+1. ¿Hay normativa aplicable? → Buscar en docs/referencia/normativas/
+2. ¿Hay ejemplo similar? → Buscar en docs/referencia/ejemplos/
+3. ¿Hay catálogo de materiales? → Consultar docs/referencia/materiales/
+
+### 5.2 Durante la implementación
+1. Respetar estructura de base de datos Supabase existente
+2. Usar componentes y hooks existentes cuando sea posible
+3. Mantener consistencia con el estilo del proyecto
+
+### 5.3 Después de implementar
+1. Verificar que los cálculos cumplen normativa
+2. Incluir referencias normativas en comentarios
+3. Sugerir actualización de documentación si es necesario
+
+## 6. RESTRICCIONES
+
+### 6.1 NO hacer
+- Modificar archivos en docs/referencia/ (son de solo lectura para el asistente)
+- Inventar valores de normativas sin consultar docs/referencia/
+- Mezclar normativas de diferentes países/versiones sin aclaración
+- Implementar soluciones que violen normativas aplicables
+
+### 6.2 SIEMPRE hacer
+- Consultar docs/referencia/ antes de cálculos de ingeniería
+- Citar la fuente normativa específica
+- Validar que los cálculos cumplen con la normativa aplicable
+- Informar al usuario si falta documentación en docs/referencia/
+
+## 7. COMANDOS ÚTILES
+
+```bash
+# Actualizar índice de documentación
+npm run ingest:docs
+
+# Ver índice JSON
+cat docs/output/indice.json
+
+# Ver contexto consolidado
+cat docs/output/contexto-tecnico.md
+```
+
+## 8. NOTAS
+
+- Este archivo es leído automáticamente por Cline al iniciar
+- Si el usuario modifica docs/referencia/, debe ejecutar npm run ingest:docs
+- El archivo docs/output/contexto-tecnico.md es generado automáticamente
+- Para PDFs: instalar pdf-parse para extracción completa de texto
