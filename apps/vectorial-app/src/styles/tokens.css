@@ -1,0 +1,48 @@
+/*
+ * Sistema de diseño VECTORIAL — "Density Design".
+ * Azul industrial de alto contraste + naranja quemado como único acento,
+ * radios de esquina mínimos (2px) y transiciones cortas (100ms): identidad
+ * de instrumento de taller, no de plantilla SaaS genérica.
+ *
+ * Fuente de verdad única de los tokens de diseño, consumida por Tailwind v4
+ * (`@import`) desde cualquier app del monorepo — no duplicar estos valores.
+ */
+@theme {
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+
+  --color-navy-950: #050d18;
+  --color-navy-900: #0a2540;
+  --color-navy-800: #123a5c;
+  --color-navy-700: #1d4f74;
+
+  --color-orange-700: #a35c05;
+  --color-orange-600: #c06d05;
+  --color-orange-500: #d97706;
+  --color-orange-400: #e2913a;
+
+  --radius-xs: 2px;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+  --radius-2xl: 2px;
+  --radius-3xl: 2px;
+  --radius-4xl: 2px;
+}
+
+/* rounded-full no expone un token de tema en Tailwind v4 (usa calc(infinity));
+   se fuerza aquí para que ningún punto/badge circular sobreviva al rediseño. */
+.rounded-full {
+  border-radius: 2px !important;
+}
+
+.glass-panel {
+  border-color: rgba(255, 255, 255, 0.12);
+  transition: border-color 0.1s ease-out, background-color 0.1s ease-out;
+}
+
+.glass-panel:hover {
+  border-color: rgba(217, 119, 6, 0.5);
+}

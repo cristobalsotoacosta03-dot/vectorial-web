@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ToolHeader from './ToolHeader'
-import { ENCLOSURE_PRESETS, calculateThermalPower } from '../../lib/engineering'
-import { inputClass, labelClass } from '../../lib/uiConstants'
+import { ENCLOSURE_PRESETS, calculateThermalPower } from 'vectorial-app/lib/engineering'
+import { inputClass, labelClass } from 'vectorial-app/lib/uiConstants'
 import InfoTooltip from './InfoTooltip'
 import TechnicalReport from './TechnicalReport'
 

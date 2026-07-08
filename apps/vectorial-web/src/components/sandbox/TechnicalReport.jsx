@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { exportCalculationToJSON } from '../../lib/exportUtils'
-import { saveCalculation } from '../../lib/calculationStore'
-import { useCalculationHistory } from '../../hooks/useCalculationHistory'
-import { useProjectMeta } from '../../hooks/useProjectMeta'
+import { exportCalculationToJSON } from 'vectorial-app/lib/exportUtils'
+import { saveCalculation } from 'vectorial-app/lib/calculationStore'
+import { useCalculationHistory } from 'vectorial-app/hooks/useCalculationHistory'
+import { useProjectMeta } from 'vectorial-app/hooks/useProjectMeta'
 
 /**
  * Configuración de presentación por tipo de informe: qué campos de

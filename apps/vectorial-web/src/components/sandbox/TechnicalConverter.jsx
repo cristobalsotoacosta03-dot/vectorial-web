@@ -5,8 +5,8 @@ import {
   NOMINAL_DIAMETERS,
   PRESSURE_FACTORS,
   convertFromBase,
-} from '../../lib/engineering'
-import { inputClass, labelClass } from '../../lib/uiConstants'
+} from 'vectorial-app/lib/engineering'
+import { inputClass, labelClass } from 'vectorial-app/lib/uiConstants'
 
 function ResultRow({ label, value, unit }) {
   return (

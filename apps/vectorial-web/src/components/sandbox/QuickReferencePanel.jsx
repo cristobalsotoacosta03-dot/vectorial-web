@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MATERIAL_CATALOG, FLUID_CATALOG } from '../../lib/materials'
+import { MATERIAL_CATALOG, FLUID_CATALOG } from 'vectorial-app/lib/materials'
 
 /**
  * Panel flotante de "Cálculo Rápido de Referencia": rugosidades de

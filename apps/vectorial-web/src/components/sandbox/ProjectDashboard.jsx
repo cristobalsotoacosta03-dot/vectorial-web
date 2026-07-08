@@ -2,11 +2,11 @@ import { useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ToolHeader from './ToolHeader'
 import TechnicalReport from './TechnicalReport'
-import { exportCalculationToJSON, exportProjectToJSON, importProjectFromJSON } from '../../lib/exportUtils'
-import { clearCalculations, removeCalculation, updateCalculationNote } from '../../lib/calculationStore'
-import { setProjectMeta } from '../../lib/projectMeta'
-import { useCalculationHistory } from '../../hooks/useCalculationHistory'
-import { useProjectMeta } from '../../hooks/useProjectMeta'
+import { exportCalculationToJSON, exportProjectToJSON, importProjectFromJSON } from 'vectorial-app/lib/exportUtils'
+import { clearCalculations, removeCalculation, updateCalculationNote } from 'vectorial-app/lib/calculationStore'
+import { setProjectMeta } from 'vectorial-app/lib/projectMeta'
+import { useCalculationHistory } from 'vectorial-app/hooks/useCalculationHistory'
+import { useProjectMeta } from 'vectorial-app/hooks/useProjectMeta'
 
 const TYPE_LABELS = {
   pipe_flow: 'Fluidos y Tuberías',

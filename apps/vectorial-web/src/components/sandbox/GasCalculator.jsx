@@ -6,10 +6,10 @@ import {
   GAS_MAX_VELOCITY,
   calculateGasPressureDrop,
   validatePhysicalParameters,
-} from '../../lib/engineering'
-import { MATERIAL_CATALOG } from '../../lib/materials'
-import { estimateBillOfMaterials } from '../../lib/bom'
-import { inputClass, labelClass, getInputClass } from '../../lib/uiConstants'
+} from 'vectorial-app/lib/engineering'
+import { MATERIAL_CATALOG } from 'vectorial-app/lib/materials'
+import { estimateBillOfMaterials } from 'vectorial-app/lib/bom'
+import { inputClass, labelClass, getInputClass } from 'vectorial-app/lib/uiConstants'
 import InfoTooltip from './InfoTooltip'
 import TechnicalReport from './TechnicalReport'
 

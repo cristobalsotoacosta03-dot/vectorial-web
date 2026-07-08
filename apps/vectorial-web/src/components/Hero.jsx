@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { cn } from '../lib/cn'
+import { cn } from 'vectorial-app/lib/cn'
 
 const container = {
   hidden: {},

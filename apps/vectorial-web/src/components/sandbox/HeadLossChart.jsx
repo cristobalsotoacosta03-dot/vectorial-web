@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
-import { generateHeadLossCurve } from '../../lib/engineering'
+import { generateHeadLossCurve } from 'vectorial-app/lib/engineering'
 
 /**
  * Componente de gráfico de pérdida de carga vs caudal.
