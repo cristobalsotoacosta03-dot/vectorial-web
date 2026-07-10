@@ -1,26 +1,10 @@
 @import "tailwindcss";
 
-/*
- * Los design tokens ("Density Design": navy + naranja quemado, radios de 2px)
- * viven en vectorial-app como fuente de verdad única del monorepo.
- * @source hace que Tailwind escanee ese paquete (fuera de este src/) en busca
- * de clases usadas, ya que por defecto no rastrea código en node_modules.
- */
-@import "vectorial-app/theme.css";
-@source "../../vectorial-app/src";
-
 body {
   margin: 0;
-  font-family: var(--font-body);
-  background-color: var(--color-navy-950);
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #0f172a;
   color: #e2e8f0;
-}
-
-h1,
-h2,
-h3 {
-  font-family: var(--font-heading);
-  letter-spacing: 0.025em;
 }
 
 /* Aísla #vectorial-print-report como única superficie visible al imprimir. */

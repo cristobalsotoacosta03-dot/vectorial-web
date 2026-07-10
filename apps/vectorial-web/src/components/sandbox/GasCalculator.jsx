@@ -176,7 +176,7 @@ function GasCalculator() {
             id="flow"
             type="number"
             min="0"
-            step="0.1"
+            step="any"
             inputMode="decimal"
             value={flow}
             onChange={(event) => setFlow(event.target.value)}
@@ -193,7 +193,7 @@ function GasCalculator() {
             id="diameter"
             type="number"
             min="0"
-            step="0.1"
+            step="any"
             inputMode="decimal"
             value={diameter}
             onChange={(event) => setDiameter(event.target.value)}
@@ -218,7 +218,7 @@ function GasCalculator() {
             id="length"
             type="number"
             min="0"
-            step="1"
+            step="any"
             inputMode="decimal"
             value={length}
             onChange={(event) => setLength(event.target.value)}
@@ -236,7 +236,7 @@ function GasCalculator() {
             id="pressure"
             type="number"
             min="0"
-            step="1"
+            step="any"
             inputMode="decimal"
             value={pressure}
             onChange={(event) => setPressure(event.target.value)}
@@ -315,7 +315,7 @@ function GasCalculator() {
             >
               <div className="text-lg">{result.metadata.compliance}</div>
               <div className="text-xs mt-1 opacity-80">
-                Caída de presión: {(result.pressureDropMbar * 100) / parseFloat(pressure)}% del
+                Caída de presión: {((result.pressureDropMbar * 100) / parseFloat(pressure)).toFixed(1)}% del
                 total
               </div>
             </div>

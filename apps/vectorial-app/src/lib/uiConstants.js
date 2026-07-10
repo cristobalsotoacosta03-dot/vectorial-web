@@ -3,6 +3,11 @@
  * Única fuente de verdad para el estilo de inputs y labels, antes duplicado
  * literalmente en cada componente de src/components/sandbox.
  *
+ * Consumido EXCLUSIVAMENTE por vectorial-web (landing/sandbox) vía el export
+ * `./lib/uiConstants` de package.json. El sistema de diseño del producto real
+ * (vectorial-app) es Tailwind clásico + `dark:` (ver src/hooks/useTheme.js) —
+ * no usar `glass-panel`/`navy-*` en componentes de vectorial-app.
+ *
  * @module uiConstants
  */
 

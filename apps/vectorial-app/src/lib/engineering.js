@@ -543,11 +543,13 @@ export function validatePhysicalParameters(params) {
   const errors = []
   const warnings = []
 
-  // Validaciones de rango
-  if (params.flow && (params.flow < 0 || params.flow > 10000)) {
+  // Validaciones de rango. Se usa `!== undefined` en vez de un check "truthy"
+  // porque 0 es un valor de entrada válido a rechazar (falsy haría que
+  // flow=0 o diameter=0 se saltaran silenciosamente esta validación).
+  if (params.flow !== undefined && (params.flow < 0 || params.flow > 10000)) {
     errors.push('Caudal fuera de rango típico (0-10000 m³/h)')
   }
-  if (params.diameter && (params.diameter < 1 || params.diameter > 2000)) {
+  if (params.diameter !== undefined && (params.diameter < 1 || params.diameter > 2000)) {
     errors.push('Diámetro fuera de rango típico (1-2000 mm)')
   }
   if (params.velocity && params.velocity > 10) {
@@ -647,19 +649,21 @@ export function calculateInversePipeSizing({
     return result.headLossM
   }
 
-  // Verificar si el rango es factible
+  // Verificar si el rango es factible. La pérdida de carga decrece de forma
+  // monótona al aumentar el diámetro, así que lossAtMin (diámetro más
+  // pequeño) es siempre >= lossAtMax (diámetro más grande) dentro del rango.
   const lossAtMin = calculateLossAtDiameter(minDiameter)
   const lossAtMax = calculateLossAtDiameter(maxDiameter)
 
-  if (lossAtMin > maxHeadLoss) {
+  if (lossAtMax > maxHeadLoss) {
     throw new Error(
-      `Incluso con el diámetro mínimo (${minDiameter} mm) la pérdida (${lossAtMin.toFixed(2)} m) supera el máximo permitido (${maxHeadLoss} m)`,
+      `Incluso con el diámetro máximo (${maxDiameter} mm) la pérdida (${lossAtMax.toFixed(2)} m) supera el máximo permitido (${maxHeadLoss} m). Aumenta maxDiameter.`,
     )
   }
 
-  if (lossAtMax < maxHeadLoss) {
+  if (lossAtMin <= maxHeadLoss) {
     throw new Error(
-      `Incluso con el diámetro máximo (${maxDiameter} mm) la pérdida (${lossAtMax.toFixed(2)} m) es menor que el mínimo. Se puede usar ${maxDiameter} mm`,
+      `Incluso con el diámetro mínimo (${minDiameter} mm) la pérdida (${lossAtMin.toFixed(2)} m) ya cumple el máximo permitido (${maxHeadLoss} m). Se puede usar ${minDiameter} mm.`,
     )
   }
 
@@ -674,10 +678,12 @@ export function calculateInversePipeSizing({
     mid = (low + high) / 2
     const loss = calculateLossAtDiameter(mid)
 
+    // Pérdida por encima del objetivo -> hace falta más diámetro (subir low);
+    // pérdida por debajo -> se puede reducir diámetro (bajar high).
     if (loss > maxHeadLoss) {
-      high = mid
-    } else {
       low = mid
+    } else {
+      high = mid
     }
 
     iterations++

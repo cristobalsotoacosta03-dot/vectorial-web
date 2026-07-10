@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import ToolHeader from './ToolHeader'
 import HeadLossChart from './HeadLossChart'
 import TechnicalReport from './TechnicalReport'
-import { FLUID_PRESETS, calculatePipeFlow, calculateInversePipeSizing } from 'vectorial-app/lib/engineering'
+import { FLUID_PRESETS, calculatePipeFlow, calculateInversePipeSizing, validatePhysicalParameters } from 'vectorial-app/lib/engineering'
 import { MATERIAL_CATALOG, getMaterial } from 'vectorial-app/lib/materials'
 import { estimateBillOfMaterials } from 'vectorial-app/lib/bom'
 import { inputClass, labelClass, getInputClass } from 'vectorial-app/lib/uiConstants'
@@ -23,6 +23,7 @@ function PipeFlowCalculator() {
   const [calculationMode, setCalculationMode] = useState('direct') // 'direct' | 'inverse'
   const [showReport, setShowReport] = useState(false)
   const [inverseError, setInverseError] = useState('')
+  const [validationErrors, setValidationErrors] = useState([])
 
   const selectedMaterial = useMemo(() => getMaterial(materialKey), [materialKey])
 
@@ -75,6 +76,8 @@ function PipeFlowCalculator() {
 
   const handleCalculate = (event) => {
     event.preventDefault()
+    setValidationErrors([])
+
     const flowValue = parseFloat(flow)
     const diameterValue = parseFloat(diameter)
     const lengthValue = parseFloat(length)
@@ -89,17 +92,36 @@ function PipeFlowCalculator() {
       return
     }
 
-    setResult(
-      calculatePipeFlow({
-        flow: flowValue,
-        diameter: diameterValue,
-        length: lengthValue,
-        density: densityValue,
-        viscosity: viscosityValue,
-        material: materialKey,
-      }),
-    )
-    setInverseResult(null)
+    // Validación de rango físico (evita aceptar diámetros/caudales fuera de
+    // todo rango realista, p.ej. 0.001 mm, que no lanzan excepción en el
+    // motor pero producen resultados sin sentido de ingeniería).
+    const basicValidation = validatePhysicalParameters({
+      flow: flowValue,
+      diameter: diameterValue,
+    })
+
+    if (!basicValidation.isValid) {
+      setValidationErrors(basicValidation.errors)
+      setResult(null)
+      return
+    }
+
+    try {
+      setResult(
+        calculatePipeFlow({
+          flow: flowValue,
+          diameter: diameterValue,
+          length: lengthValue,
+          density: densityValue,
+          viscosity: viscosityValue,
+          material: materialKey,
+        }),
+      )
+      setInverseResult(null)
+    } catch (error) {
+      setValidationErrors([error.message])
+      setResult(null)
+    }
   }
 
   const handleInverseCalculate = (event) => {
@@ -213,7 +235,7 @@ function PipeFlowCalculator() {
             id="flow"
             type="number"
             min="0"
-            step="0.01"
+            step="any"
             inputMode="decimal"
             value={flow}
             onChange={(event) => setFlow(event.target.value)}
@@ -233,7 +255,7 @@ function PipeFlowCalculator() {
             id="diameter"
             type="number"
             min="0"
-            step="0.1"
+            step="any"
             inputMode="decimal"
             value={diameter}
             onChange={(event) => setDiameter(event.target.value)}
@@ -272,7 +294,7 @@ function PipeFlowCalculator() {
             id="length"
             type="number"
             min="0"
-            step="0.5"
+            step="any"
             inputMode="decimal"
             value={length}
             onChange={(event) => setLength(event.target.value)}
@@ -307,7 +329,7 @@ function PipeFlowCalculator() {
             id="density"
             type="number"
             min="0"
-            step="1"
+            step="any"
             inputMode="decimal"
             value={density}
             onChange={(event) => {
@@ -327,7 +349,7 @@ function PipeFlowCalculator() {
             id="viscosity"
             type="number"
             min="0"
-            step="0.01"
+            step="any"
             inputMode="decimal"
             value={viscosity}
             onChange={(event) => {
@@ -375,7 +397,7 @@ function PipeFlowCalculator() {
               id="flow"
               type="number"
               min="0"
-              step="0.01"
+              step="any"
               inputMode="decimal"
               value={flow}
               onChange={(event) => setFlow(event.target.value)}
@@ -392,7 +414,7 @@ function PipeFlowCalculator() {
               id="length"
               type="number"
               min="0"
-              step="0.5"
+              step="any"
               inputMode="decimal"
               value={length}
               onChange={(event) => setLength(event.target.value)}
@@ -409,7 +431,7 @@ function PipeFlowCalculator() {
               id="max-head-loss"
               type="number"
               min="0"
-              step="0.1"
+              step="any"
               inputMode="decimal"
               value={maxHeadLoss}
               onChange={(event) => setMaxHeadLoss(event.target.value)}
@@ -426,7 +448,7 @@ function PipeFlowCalculator() {
               id="density"
               type="number"
               min="0"
-              step="1"
+              step="any"
               inputMode="decimal"
               value={density}
               onChange={(event) => {
@@ -446,7 +468,7 @@ function PipeFlowCalculator() {
               id="viscosity"
               type="number"
               min="0"
-              step="0.01"
+              step="any"
               inputMode="decimal"
               value={viscosity}
               onChange={(event) => {
@@ -471,6 +493,17 @@ function PipeFlowCalculator() {
         <div className="mt-6 border border-red-500/40 bg-red-500/10 p-4 text-left">
           <p className="text-sm font-semibold text-red-400">Error de cálculo</p>
           <p className="mt-1 text-sm text-red-300">{inverseError}</p>
+        </div>
+      )}
+
+      {validationErrors.length > 0 && (
+        <div className="mt-6 border border-red-500/40 bg-red-500/10 p-4 text-left">
+          <p className="text-sm font-semibold text-red-400">Error de validación</p>
+          <ul className="mt-1 text-sm text-red-300 list-disc list-inside">
+            {validationErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
         </div>
       )}
 

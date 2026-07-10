@@ -4,8 +4,11 @@
  * radios de esquina mínimos (2px) y transiciones cortas (100ms): identidad
  * de instrumento de taller, no de plantilla SaaS genérica.
  *
- * Fuente de verdad única de los tokens de diseño, consumida por Tailwind v4
- * (`@import`) desde cualquier app del monorepo — no duplicar estos valores.
+ * Consumido EXCLUSIVAMENTE por vectorial-web (landing/sandbox) vía el export
+ * `./theme.css` de package.json. El producto real (vectorial-app) NO usa
+ * estos tokens — su sistema de diseño es Tailwind clásico azul/índigo/slate
+ * + `dark:` (ver src/hooks/useTheme.js). No importar tokens.css en
+ * componentes de vectorial-app.
  */
 @theme {
   --font-heading: 'Inter', system-ui, sans-serif;

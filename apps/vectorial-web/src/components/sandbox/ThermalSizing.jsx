@@ -54,7 +54,7 @@ function ThermalSizing() {
             id="area"
             type="number"
             min="0"
-            step="0.1"
+            step="any"
             inputMode="decimal"
             value={area}
             onChange={(event) => setArea(event.target.value)}
@@ -71,7 +71,7 @@ function ThermalSizing() {
             id="delta-t"
             type="number"
             min="0"
-            step="0.5"
+            step="any"
             inputMode="decimal"
             value={deltaT}
             onChange={(event) => setDeltaT(event.target.value)}
@@ -107,7 +107,7 @@ function ThermalSizing() {
             id="u-value"
             type="number"
             min="0"
-            step="0.01"
+            step="any"
             inputMode="decimal"
             value={u}
             onChange={(event) => {

@@ -1,6 +1,6 @@
-# GestiObra – Landing Page
+# Vectorial – Landing Page
 
-Landing page de GestiObra, herramienta de gestión de obra para instaladores técnicos.
+Landing page de Vectorial, herramienta de ingeniería para instaladores técnicos.
 
 ## Stack
 

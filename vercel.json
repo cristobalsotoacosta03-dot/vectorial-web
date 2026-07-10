@@ -1,0 +1,6 @@
+{
+  "installCommand": "npm install",
+  "buildCommand": "npm run build --workspace=apps/vectorial-web",
+  "outputDirectory": "apps/vectorial-web/dist",
+  "framework": null
+}
