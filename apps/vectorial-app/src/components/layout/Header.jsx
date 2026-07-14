@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Home, Building2, FileText, Package, BookOpen, Calculator, PenTool, User, CreditCard, Settings } from 'lucide-react'
+import { Search, Menu, Home, Building2, FileText, Package, BookOpen, Calculator, PenTool, User, CreditCard, Settings } from 'lucide-react'
 import Modal from '../ui/Modal'
 
 const DESTINOS = [
@@ -16,7 +16,7 @@ const DESTINOS = [
   { to: '/ajustes',      label: 'Ajustes',                     icon: Settings },
 ]
 
-export default function Header() {
+export default function Header({ onOpenMobileMenu }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const navigate = useNavigate()
@@ -48,7 +48,14 @@ export default function Header() {
   }
 
   return (
-    <header className="h-16 flex items-center gap-4 px-6 border-b border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
+    <header className="h-16 flex items-center gap-3 px-4 sm:px-6 border-b border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/50 backdrop-blur-md sticky top-0 z-10">
+      <button
+        onClick={onOpenMobileMenu}
+        aria-label="Abrir menú"
+        className="lg:hidden p-2 -ml-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 transition-colors shrink-0"
+      >
+        <Menu size={20} />
+      </button>
       <button
         onClick={() => setOpen(true)}
         className="flex-1 max-w-sm flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 text-sm text-slate-400 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"

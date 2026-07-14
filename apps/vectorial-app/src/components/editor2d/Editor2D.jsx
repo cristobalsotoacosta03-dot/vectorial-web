@@ -31,6 +31,8 @@ export default function Editor2D({ nombrePlano = 'plano', onGuardar }) {
   const [stroke, setStroke] = useState('#1e293b')
   const [scale, setScale] = useState(1)
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 })
+  const [canvasSize, setCanvasSize] = useState({ width: 900, height: 560 })
+  const canvasContainerRef = useRef(null)
 
   const [history, setHistory] = useState([[]])
   const [historyIdx, setHistoryIdx] = useState(0)
@@ -79,6 +81,17 @@ export default function Editor2D({ nombrePlano = 'plano', onGuardar }) {
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
   })
+
+  useEffect(() => {
+    const el = canvasContainerRef.current
+    if (!el) return
+    const observer = new ResizeObserver(entries => {
+      const { width, height } = entries[0].contentRect
+      if (width > 0 && height > 0) setCanvasSize({ width, height })
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     if (tool === 'select' && selectedId && trRef.current && shapeRefs.current[selectedId]) {
@@ -167,8 +180,8 @@ export default function Editor2D({ nombrePlano = 'plano', onGuardar }) {
   return (
     <div className="flex flex-col h-[75vh] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-white dark:bg-slate-900">
       {/* Barra superior */}
-      <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
-        <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 overflow-x-auto">
+        <div className="flex items-center gap-1 shrink-0">
           <Button size="sm" variant="ghost" onClick={undo} disabled={historyIdx === 0} icon={<Undo2 size={16} />} title="Deshacer (Ctrl+Z)" />
           <Button size="sm" variant="ghost" onClick={redo} disabled={historyIdx >= history.length - 1} icon={<Redo2 size={16} />} title="Rehacer (Ctrl+Y)" />
           <Button size="sm" variant="ghost" onClick={eliminarSeleccion} disabled={!selectedId} icon={<Trash2 size={16} />} title="Eliminar (Supr)" />
@@ -192,7 +205,7 @@ export default function Editor2D({ nombrePlano = 'plano', onGuardar }) {
 
       <div className="flex flex-1 min-h-0">
         {/* Herramientas */}
-        <div className="w-16 shrink-0 border-r border-slate-200 dark:border-slate-800 flex flex-col items-center gap-1 py-3 bg-slate-50 dark:bg-slate-800/30">
+        <div className="w-12 sm:w-16 shrink-0 border-r border-slate-200 dark:border-slate-800 flex flex-col items-center gap-1 py-3 bg-slate-50 dark:bg-slate-800/30 overflow-y-auto">
           {HERRAMIENTAS.map(h => {
             const Icon = h.icon
             return (
@@ -214,7 +227,7 @@ export default function Editor2D({ nombrePlano = 'plano', onGuardar }) {
 
         {/* Panel de símbolos, solo visible con la herramienta symbol activa */}
         {tool === 'symbol' && (
-          <div className="w-48 shrink-0 border-r border-slate-200 dark:border-slate-800 overflow-y-auto py-2">
+          <div className="w-32 sm:w-48 shrink-0 border-r border-slate-200 dark:border-slate-800 overflow-y-auto py-2">
             {SIMBOLOS.map(s => (
               <button
                 key={s.id}
@@ -232,11 +245,11 @@ export default function Editor2D({ nombrePlano = 'plano', onGuardar }) {
         )}
 
         {/* Canvas */}
-        <div className="flex-1 min-w-0 bg-slate-100 dark:bg-slate-950 overflow-hidden">
+        <div ref={canvasContainerRef} className="flex-1 min-w-0 bg-slate-100 dark:bg-slate-950 overflow-hidden">
           <Stage
             ref={stageRef}
-            width={900}
-            height={560}
+            width={canvasSize.width}
+            height={canvasSize.height}
             scaleX={scale}
             scaleY={scale}
             x={stagePos.x}
@@ -322,7 +335,7 @@ export default function Editor2D({ nombrePlano = 'plano', onGuardar }) {
         </div>
 
         {/* Propiedades */}
-        <div className="w-56 shrink-0 border-l border-slate-200 dark:border-slate-800 p-4 space-y-4">
+        <div className="hidden md:block md:w-56 shrink-0 border-l border-slate-200 dark:border-slate-800 p-4 space-y-4">
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Propiedades</p>
           {seleccionado ? (
             <>

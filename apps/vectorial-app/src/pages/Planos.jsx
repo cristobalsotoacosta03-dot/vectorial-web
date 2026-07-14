@@ -19,7 +19,7 @@ export default function Planos({ selectedObraId }) {
         <input
           value={nombrePlano}
           onChange={e => setNombrePlano(e.target.value)}
-          className="border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500/40 w-64"
+          className="border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-xl px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500/40 w-full sm:w-64"
         />
       </div>
 

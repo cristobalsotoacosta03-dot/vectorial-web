@@ -147,6 +147,7 @@ export default function Presupuestos() {
         </div>
       ) : (
         <Card className="overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800">
@@ -177,6 +178,7 @@ export default function Presupuestos() {
               })}
             </tbody>
           </table>
+          </div>
         </Card>
       )}
     </div>
