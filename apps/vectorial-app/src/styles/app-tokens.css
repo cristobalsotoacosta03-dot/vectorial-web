@@ -1,0 +1,24 @@
+/*
+ * Sistema de diseño VECTORIAL APP — Fase 1 del roadmap de producto.
+ * Exclusivo de vectorial-app. No confundir con tokens.css (Density Design),
+ * que sigue siendo exclusivo de vectorial-web — no se toca aquí.
+ *
+ * vectorial-app carga Tailwind vía CDN (ver index.html), no vía @tailwindcss/vite,
+ * así que estos tokens se exponen como custom properties de CSS puro (no un
+ * bloque @theme, que solo tiene efecto con el build real de Tailwind). Los
+ * mismos valores están además registrados en tailwind.config (index.html)
+ * como theme.extend.colors, para que las utilidades bg-primary-500, etc.
+ * funcionen igual que cualquier color de Tailwind.
+ */
+:root {
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-500: #0066cc;
+  --color-primary-600: #0052a3;
+  --color-primary-700: #003d7a;
+
+  --color-accent: #f97316;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+}

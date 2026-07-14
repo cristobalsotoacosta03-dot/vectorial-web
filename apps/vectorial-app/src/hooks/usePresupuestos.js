@@ -67,7 +67,7 @@ export function usePresupuestos() {
         estado: formData.estado,
       }
       setPresupuestos(prev => [{ ...nuevo, id: String(Date.now()) }, ...prev])
-      return
+      return { success: true }
     }
 
     const nuevo = {
@@ -80,7 +80,9 @@ export function usePresupuestos() {
       estado: formData.estado,
     }
     const { data, error } = await supabase.from('presupuestos').insert([nuevo]).select('*, obras(nombre)').single()
-    if (!error && data) setPresupuestos(prev => [{ ...data, obra_nombre: data.obras?.nombre ?? '—' }, ...prev])
+    if (error) return { success: false, error: error.message }
+    setPresupuestos(prev => [{ ...data, obra_nombre: data.obras?.nombre ?? '—' }, ...prev])
+    return { success: true }
   }
 
   // KPIs derivados

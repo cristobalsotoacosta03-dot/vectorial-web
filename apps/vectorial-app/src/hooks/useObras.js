@@ -50,10 +50,21 @@ export function useObras() {
   async function addObra(obraData) {
     if (!supabase || !empresaId) {
       setObras(prev => [{ ...obraData, id: String(Date.now()) }, ...prev])
-      return
+      return { success: true }
     }
-    const { data, error } = await supabase.from('obras').insert([{ ...obraData, empresa_id: empresaId }]).select().single()
-    if (!error && data) setObras(prev => [data, ...prev])
+    // Las columnas fecha_inicio/fecha_fin son DATE: Postgres rechaza '' (solo
+    // acepta una fecha válida o NULL), así que un campo de fecha vacío en el
+    // formulario debe enviarse como null, no como cadena vacía.
+    const payload = {
+      ...obraData,
+      fecha_inicio: obraData.fecha_inicio || null,
+      fecha_fin: obraData.fecha_fin || null,
+      empresa_id: empresaId,
+    }
+    const { data, error } = await supabase.from('obras').insert([payload]).select().single()
+    if (error) return { success: false, error: error.message }
+    setObras(prev => [data, ...prev])
+    return { success: true }
   }
 
   // KPIs derivados
