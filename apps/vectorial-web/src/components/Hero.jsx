@@ -75,7 +75,7 @@ function Hero() {
             </div>
             <div className="p-6">
               <p className="text-left font-mono text-sm text-slate-400">
-                <span className="text-orange-500">$</span> gestiobra --calculate --fluid=water --diameter=25.4 --flow=3.5
+                <span className="text-orange-500">$</span> vectorial --calculate --fluid=water --diameter=25.4 --flow=3.5
               </p>
               <div className="mt-4 grid grid-cols-3 gap-4">
                 <div className="rounded-xl border border-white/5 bg-navy-800/30 p-4 text-left">

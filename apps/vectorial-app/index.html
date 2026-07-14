@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GestiObra — Panel de Control</title>
+    <title>Vectorial — Panel de Control</title>
     <script>
       // Aplica el tema guardado antes del primer pintado, para evitar parpadeo claro/oscuro
       (function () {
         try {
-          var stored = localStorage.getItem('gestiobra-theme')
+          var stored = localStorage.getItem('vectorial-theme')
           var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
           if (dark) document.documentElement.classList.add('dark')
         } catch (e) {}

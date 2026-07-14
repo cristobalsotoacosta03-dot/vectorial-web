@@ -18,7 +18,7 @@ export default function AppLayout() {
         </main>
 
         <footer className="py-6 text-center text-xs text-slate-400 dark:text-slate-600 border-t border-slate-200 dark:border-slate-800">
-          GestiObra — Prototipo v0.2 · RITE · RIGLO · UNE-EN 1057 · CTE DB-HE4
+          Vectorial — Prototipo v0.2 · RITE · RIGLO · UNE-EN 1057 · CTE DB-HE4
         </footer>
       </div>
     </div>

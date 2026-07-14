@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const KEY = 'gestiobra_partidas_v1'
+const KEY = 'vectorial_partidas_v1'
 
 function readAll() {
   try { return JSON.parse(localStorage.getItem(KEY)) || {} }

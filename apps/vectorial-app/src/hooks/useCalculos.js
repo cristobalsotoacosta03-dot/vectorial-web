@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const KEY   = 'gestiobra_calculos_v1'
+const KEY   = 'vectorial_calculos_v1'
 const EMPTY = { glp: [], tuberias: [], acs: [] }
 
 function read() {

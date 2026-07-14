@@ -123,7 +123,7 @@ const ESTADOS = {
   na:         { label: '⊘ N/A',        cls: 'bg-slate-50 text-slate-400 border-slate-200 line-through' },
 }
 
-const STORAGE_KEY = 'gestiobra_checklist_v1'
+const STORAGE_KEY = 'vectorial_checklist_v1'
 
 function loadChecklist(tipo) {
   try {

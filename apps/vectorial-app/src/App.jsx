@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { Routes, Route, useNavigate as useRouterNavigate } from 'react-router-dom'
+import RequireAuth     from './components/RequireAuth'
 import AppLayout      from './components/layout/AppLayout'
+import Login        from './pages/Login'
+import Signup       from './pages/Signup'
+import Onboarding   from './pages/Onboarding'
 import Dashboard    from './pages/Dashboard'
 import Obras        from './pages/Obras'
 import Presupuestos from './pages/Presupuestos'
@@ -35,17 +39,23 @@ export default function App() {
 
   return (
     <Routes>
-      <Route element={<AppLayout />}>
-        <Route index               element={<Dashboard    navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />} />
-        <Route path="obras"        element={<Obras        navigate={navigate} />} />
-        <Route path="presupuestos" element={<Presupuestos navigate={navigate} />} />
-        <Route path="materiales"   element={<Materiales   navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />} />
-        <Route path="catalogo"     element={<Catalogo     navigate={navigate} />} />
-        <Route path="calculadoras" element={<Calculadoras navigate={navigate} selectedObraId={selectedObraId} />} />
+      <Route path="login"    element={<Login />} />
+      <Route path="signup"   element={<Signup />} />
+      <Route path="onboarding" element={<Onboarding />} />
 
-        <Route path="perfil"  element={<Perfil />} />
-        <Route path="billing" element={<Billing />} />
-        <Route path="ajustes" element={<Ajustes />} />
+      <Route element={<RequireAuth />}>
+        <Route element={<AppLayout />}>
+          <Route index               element={<Dashboard    navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />} />
+          <Route path="obras"        element={<Obras        navigate={navigate} />} />
+          <Route path="presupuestos" element={<Presupuestos navigate={navigate} />} />
+          <Route path="materiales"   element={<Materiales   navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />} />
+          <Route path="catalogo"     element={<Catalogo     navigate={navigate} />} />
+          <Route path="calculadoras" element={<Calculadoras navigate={navigate} selectedObraId={selectedObraId} />} />
+
+          <Route path="perfil"  element={<Perfil />} />
+          <Route path="billing" element={<Billing />} />
+          <Route path="ajustes" element={<Ajustes />} />
+        </Route>
       </Route>
     </Routes>
   )

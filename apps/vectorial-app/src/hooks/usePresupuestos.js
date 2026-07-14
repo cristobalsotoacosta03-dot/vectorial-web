@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 import { PRESUPUESTOS_MOCK } from '../data/mocks'
 
 const calcTotal = (base, pct) => Number(base) * (1 + Number(pct) / 100)
 
 export function usePresupuestos() {
+  const { empresaId } = useAuth()
   const [presupuestos, setPresupuestos] = useState([])
   const [loading, setLoading] = useState(true)
   const [modoDemo, setModoDemo] = useState(false)
@@ -15,23 +17,27 @@ export function usePresupuestos() {
     setLoading(true)
     setError(null)
     try {
-      if (!supabase) {
+      if (!supabase || !empresaId) {
         setPresupuestos(PRESUPUESTOS_MOCK)
         setModoDemo(true)
         return
       }
+      // La tabla real no guarda el nombre de la obra, solo obra_id (FK) —
+      // se trae vía join para no tener que tocar el resto de la UI, que
+      // sigue leyendo p.obra_nombre.
       const { data, error: supabaseError } = await supabase
         .from('presupuestos')
-        .select('*')
+        .select('*, obras(nombre)')
+        .eq('empresa_id', empresaId)
         .order('created_at', { ascending: false })
-      
+
       if (supabaseError) {
         console.error('Supabase error:', supabaseError)
         setError(supabaseError.message || 'Error al conectar con la base de datos')
         setPresupuestos(PRESUPUESTOS_MOCK)
         setModoDemo(true)
       } else {
-        setPresupuestos(data || [])
+        setPresupuestos((data || []).map(p => ({ ...p, obra_nombre: p.obras?.nombre ?? '—' })))
       }
     } catch (err) {
       console.error('Error inesperado:', err)
@@ -41,7 +47,7 @@ export function usePresupuestos() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [empresaId])
 
   useEffect(() => {
     cargarPresupuestos()
@@ -50,20 +56,31 @@ export function usePresupuestos() {
   async function addPresupuesto(formData) {
     const numero = `PRES-${new Date().getFullYear()}-${String(nextNum).padStart(3, '0')}`
     setNextNum(n => n + 1)
+
+    if (!supabase || !empresaId) {
+      const nuevo = {
+        numero,
+        obra_nombre: formData.obra_nombre,
+        fecha: formData.fecha || new Date().toISOString().slice(0, 10),
+        importe_base: parseFloat(formData.importe_base),
+        margen_pct: parseFloat(formData.margen_pct),
+        estado: formData.estado,
+      }
+      setPresupuestos(prev => [{ ...nuevo, id: String(Date.now()) }, ...prev])
+      return
+    }
+
     const nuevo = {
+      empresa_id: empresaId,
+      obra_id: formData.obra_id,
       numero,
-      obra_nombre: formData.obra_nombre,
       fecha: formData.fecha || new Date().toISOString().slice(0, 10),
       importe_base: parseFloat(formData.importe_base),
       margen_pct: parseFloat(formData.margen_pct),
       estado: formData.estado,
     }
-    if (!supabase) {
-      setPresupuestos(prev => [{ ...nuevo, id: String(Date.now()) }, ...prev])
-      return
-    }
-    const { data, error } = await supabase.from('presupuestos').insert([nuevo]).select().single()
-    if (!error && data) setPresupuestos(prev => [data, ...prev])
+    const { data, error } = await supabase.from('presupuestos').insert([nuevo]).select('*, obras(nombre)').single()
+    if (!error && data) setPresupuestos(prev => [{ ...data, obra_nombre: data.obras?.nombre ?? '—' }, ...prev])
   }
 
   // KPIs derivados

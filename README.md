@@ -15,16 +15,18 @@ vectorial/
 ## 🚀 Aplicaciones
 
 ### Vectorial App
-**URL:** https://gestiobra.vercel.app
+**URL:** https://vectorial-app.vercel.app
 
-Calculadoras de instalaciones técnicas:
+El producto completo (Core Engine), con cuenta y datos reales por empresa (Supabase + RLS multi-tenant):
 - 🧮 GLP, Tuberías, ACS, Conversor
 - ✅ Checklist OCA (RIGLO, RITE)
 - 📊 Gestión de obras y presupuestos
 - 📚 Biblia del Instalador (60+ referencias)
 
 ### Vectorial Web
-Landing page promocional (próximamente)
+**URL:** https://vectorial-web.vercel.app
+
+Landing page promocional (Presentation Layer) con un Engineering Sandbox público en `/sandbox` — una demo limitada de las calculadoras para que cualquiera las pruebe sin registrarse, pensada como embudo hacia Vectorial App.
 
 ## 🛠️ Desarrollo
 

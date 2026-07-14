@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const STORAGE_KEY = 'gestiobra-theme'
+const STORAGE_KEY = 'vectorial-theme'
 
 function getInitialTheme() {
   const stored = localStorage.getItem(STORAGE_KEY)

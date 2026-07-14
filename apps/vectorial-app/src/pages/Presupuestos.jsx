@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { usePresupuestos } from '../hooks/usePresupuestos'
-import { OBRAS_MOCK } from '../data/mocks'
+import { useObras } from '../hooks/useObras'
 
 const ESTADO_CFG = {
   borrador:  { label: 'Borrador',   cls: 'bg-slate-100 text-slate-500'    },
@@ -12,10 +12,11 @@ const ESTADO_CFG = {
 const fmt = (n) => Number(n).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 const fmtPct = (n) => Number(n).toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
-const FORM_VACIO = { obra_nombre: OBRAS_MOCK[0].nombre, fecha: '', importe_base: '', margen_pct: 18, estado: 'borrador' }
+const FORM_VACIO = { obra_id: '', fecha: '', importe_base: '', margen_pct: 18, estado: 'borrador' }
 
 export default function Presupuestos() {
   const { presupuestos, loading, modoDemo, addPresupuesto, calcTotal, kpi } = usePresupuestos()
+  const { obras } = useObras()
   const [mostrarForm, setForm]    = useState(false)
   const [form, setFormData]       = useState(FORM_VACIO)
   const [guardando, setGuardando] = useState(false)
@@ -27,7 +28,8 @@ export default function Presupuestos() {
   async function handleSubmit(e) {
     e.preventDefault()
     setGuardando(true)
-    await addPresupuesto(form)
+    const obraSeleccionada = obras.find(o => o.id === form.obra_id)
+    await addPresupuesto({ ...form, obra_nombre: obraSeleccionada?.nombre })
     setFormData(FORM_VACIO)
     setForm(false)
     setGuardando(false)
@@ -69,9 +71,10 @@ export default function Presupuestos() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
               <label className="block text-xs font-medium text-slate-500 mb-1">Obra vinculada *</label>
-              <select required value={form.obra_nombre} onChange={e => setFormData(f => ({...f, obra_nombre: e.target.value}))}
+              <select required value={form.obra_id} onChange={e => setFormData(f => ({...f, obra_id: e.target.value}))}
                 className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white">
-                {OBRAS_MOCK.map(o => <option key={o.id} value={o.nombre}>{o.nombre}</option>)}
+                <option value="" disabled>Selecciona una obra…</option>
+                {obras.map(o => <option key={o.id} value={o.id}>{o.nombre}</option>)}
               </select>
             </div>
             <div>

@@ -67,7 +67,7 @@ th{padding:10px 10px;text-align:left;font-size:12px;text-transform:uppercase;let
     </tr>
   </tfoot>
 </table>
-<div class="footer">Presupuesto orientativo · IVA no incluido · Válido 30 días desde la fecha de emisión · GestiObra</div>
+<div class="footer">Presupuesto orientativo · IVA no incluido · Válido 30 días desde la fecha de emisión · Vectorial</div>
 <button class="print-btn" onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
 </body></html>`
   const w = window.open('', '_blank', 'width=900,height=750,scrollbars=yes')

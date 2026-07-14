@@ -16,7 +16,7 @@ function generarHTML(titulo, campos, obraNombre) {
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>${titulo} — GestiObra</title>
+<title>${titulo} — Vectorial</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:Arial,Helvetica,sans-serif;max-width:780px;margin:0 auto;padding:32px;color:#1e293b}
@@ -39,7 +39,7 @@ function generarHTML(titulo, campos, obraNombre) {
 <body>
 <div class="header">
   <div>
-    <div class="logo">Gesti<span>Obra</span></div>
+    <div class="logo">Vecto<span>rial</span></div>
     <div style="font-size:12px;color:#94a3b8;margin-top:3px">Plataforma de gestión de instalaciones técnicas</div>
   </div>
   <div class="meta">
@@ -61,7 +61,7 @@ function generarHTML(titulo, campos, obraNombre) {
   por un técnico competente habilitado según la normativa vigente.
 </div>
 <div class="footer">
-  <span>GestiObra · Informe generado el ${fecha}</span>
+  <span>Vectorial · Informe generado el ${fecha}</span>
   <span>Sujeto a verificación técnica</span>
 </div>
 <button class="print-btn" onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
@@ -72,7 +72,7 @@ function generarHTML(titulo, campos, obraNombre) {
 function generarTextoWA(titulo, campos, obraNombre) {
   const lineas = campos.map(c => `• *${c.label}:* ${c.valor}`).join('\n')
   const fecha  = new Date().toLocaleDateString('es-ES')
-  return `*📋 ${titulo.toUpperCase()}*\n📂 Obra: _${obraNombre}_\n📅 ${fecha}\n${'─'.repeat(32)}\n\n${lineas}\n\n${'─'.repeat(32)}\n_Informe generado por GestiObra_\n⚠️ _Sujeto a verificación técnica_`
+  return `*📋 ${titulo.toUpperCase()}*\n📂 Obra: _${obraNombre}_\n📅 ${fecha}\n${'─'.repeat(32)}\n\n${lineas}\n\n${'─'.repeat(32)}\n_Informe generado por Vectorial_\n⚠️ _Sujeto a verificación técnica_`
 }
 
 // ── Componente ─────────────────────────────────────────────────────────────

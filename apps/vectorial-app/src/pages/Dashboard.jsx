@@ -92,7 +92,7 @@ export default function Dashboard({ navigate, selectedObraId, setSelectedObraId 
           <div>
             <p className="text-blue-300 dark:text-indigo-400 text-sm font-medium uppercase tracking-widest mb-1">Panel de Control</p>
             <h1 className="text-3xl font-bold text-white mb-2">
-              {obraSel ? obraSel.nombre : 'Bienvenido a GestiObra'}
+              {obraSel ? obraSel.nombre : 'Bienvenido a Vectorial'}
             </h1>
             <p className="text-slate-400 text-sm capitalize">{hoy}</p>
             <div className="flex flex-wrap items-center gap-2 mt-3">

@@ -30,3 +30,6 @@ Thumbs.db
 *.sw?
 GITHUB_PUSH.ps1
 .env*
+
+# Cache local del CLI de Supabase
+supabase/.temp/
