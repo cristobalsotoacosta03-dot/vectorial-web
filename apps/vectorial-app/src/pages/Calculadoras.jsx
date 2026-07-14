@@ -1,20 +1,80 @@
 import { useState, useMemo } from 'react'
-import { Search, Flame, Gauge, Droplets, RefreshCw, ClipboardCheck, ArrowLeft } from 'lucide-react'
+import {
+  Search, Flame, Gauge, Droplets, RefreshCw, ClipboardCheck, ArrowLeft,
+  Waves, Droplet, FireExtinguisher, Cable, ShieldCheck, Lightbulb, Zap,
+  Layers, Thermometer, Wind, CloudRain, Sun, SunMedium, Trees, Mountain,
+} from 'lucide-react'
 import CalcGLP          from '../components/CalcGLP'
 import CalcTuberias     from '../components/CalcTuberias'
 import CalcACS          from '../components/CalcACS'
 import ConversorUnidades from '../components/ConversorUnidades'
 import ChecklistOCA     from '../components/ChecklistOCA'
+import CalcVasoExpansion from '../components/calculators/Hidraulica/CalcVasoExpansion'
+import CalcGrupoPresion  from '../components/calculators/Hidraulica/CalcGrupoPresion'
+import CalcRiego         from '../components/calculators/Hidraulica/CalcRiego'
+import CalcHidrantePCI   from '../components/calculators/Hidraulica/CalcHidrantePCI'
+import CalcSeccionCable  from '../components/calculators/Electrico/CalcSeccionCable'
+import CalcProtecciones  from '../components/calculators/Electrico/CalcProtecciones'
+import CalcLuminotecnia  from '../components/calculators/Electrico/CalcLuminotecnia'
+import CalcPuestaTierra  from '../components/calculators/Electrico/CalcPuestaTierra'
+import CalcCalefaccion   from '../components/calculators/Termico/CalcCalefaccion'
+import CalcSueloRadiante from '../components/calculators/Termico/CalcSueloRadiante'
+import CalcAislamiento   from '../components/calculators/Termico/CalcAislamiento'
+import CalcCargaTermica  from '../components/calculators/Termico/CalcCargaTermica'
+import CalcVentilacionGas from '../components/calculators/Gas/CalcVentilacionGas'
+import CalcAguaFria      from '../components/calculators/Fontaneria/CalcAguaFria'
+import CalcAguaCaliente  from '../components/calculators/Fontaneria/CalcAguaCaliente'
+import CalcSaneamiento   from '../components/calculators/Fontaneria/CalcSaneamiento'
+import CalcPluviales     from '../components/calculators/Fontaneria/CalcPluviales'
+import CalcSolarTermica  from '../components/calculators/Renovables/CalcSolarTermica'
+import CalcFotovoltaica  from '../components/calculators/Renovables/CalcFotovoltaica'
+import CalcBiomasa       from '../components/calculators/Renovables/CalcBiomasa'
+import CalcGeotermia     from '../components/calculators/Renovables/CalcGeotermia'
 import { useObras }     from '../hooks/useObras'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 
+const C = 'text-orange-600 bg-orange-50 dark:bg-orange-500/10 dark:text-orange-400'
+const S = 'text-sky-600 bg-sky-50 dark:bg-sky-500/10 dark:text-sky-400'
+const T = 'text-teal-600 bg-teal-50 dark:bg-teal-500/10 dark:text-teal-400'
+const V = 'text-violet-600 bg-violet-50 dark:bg-violet-500/10 dark:text-violet-400'
+const E = 'text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 dark:text-emerald-400'
+const A = 'text-amber-600 bg-amber-50 dark:bg-amber-500/10 dark:text-amber-400'
+
 const CALCULADORAS = [
-  { id: 'glp',       label: 'Depósito GLP',   desc: 'RIGLO · distancias de seguridad',  categoria: 'Gas',          icon: Flame,         color: 'text-orange-600 bg-orange-50 dark:bg-orange-500/10 dark:text-orange-400' },
-  { id: 'tuberias',  label: 'Tuberías',       desc: 'Darcy-Weisbach · UNE-EN 1057',      categoria: 'Hidráulica',   icon: Gauge,         color: 'text-sky-600 bg-sky-50 dark:bg-sky-500/10 dark:text-sky-400' },
-  { id: 'acs',       label: 'ACS / Inercia',  desc: 'CTE HE4 · RITE IT 1.2.4.6',         categoria: 'Térmica',      icon: Droplets,      color: 'text-teal-600 bg-teal-50 dark:bg-teal-500/10 dark:text-teal-400' },
-  { id: 'conversor', label: 'Conversor',      desc: 'Presión · Potencia · Caudal',       categoria: 'Utilidades',   icon: RefreshCw,     color: 'text-violet-600 bg-violet-50 dark:bg-violet-500/10 dark:text-violet-400' },
-  { id: 'checklist', label: 'Checklist OCA',  desc: 'GLP · RITE pre-inspección',         categoria: 'Cumplimiento', icon: ClipboardCheck, color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 dark:text-emerald-400' },
+  // Gas
+  { id: 'glp',              label: 'Depósito GLP',        desc: 'RIGLO · distancias de seguridad',      categoria: 'Gas',          icon: Flame,          color: C, component: CalcGLP },
+  { id: 'ventilacion_gas',  label: 'Ventilación de gas',   desc: 'UNE 60670-6',                          categoria: 'Gas',          icon: Wind,           color: C, component: CalcVentilacionGas },
+  // Hidráulica
+  { id: 'tuberias',         label: 'Tuberías',             desc: 'Darcy-Weisbach · UNE-EN 1057',         categoria: 'Hidráulica',   icon: Gauge,          color: S, component: CalcTuberias },
+  { id: 'vaso_expansion',   label: 'Vaso de expansión',    desc: 'UNE 100155',                           categoria: 'Hidráulica',   icon: Gauge,          color: S, component: CalcVasoExpansion },
+  { id: 'grupo_presion',    label: 'Grupo de presión',     desc: 'Depósito hidroneumático',              categoria: 'Hidráulica',   icon: Waves,          color: S, component: CalcGrupoPresion },
+  { id: 'riego',            label: 'Sector de riego',      desc: 'Riego localizado',                     categoria: 'Hidráulica',   icon: Droplet,        color: T, component: CalcRiego },
+  { id: 'hidrante_pci',     label: 'Hidrantes PCI',        desc: 'RD 513/2017 · CTE DB-SI',              categoria: 'Hidráulica',   icon: FireExtinguisher, color: C, component: CalcHidrantePCI },
+  // Térmica
+  { id: 'acs',              label: 'ACS / Inercia',        desc: 'CTE HE4 · RITE IT 1.2.4.6',            categoria: 'Térmica',      icon: Droplets,       color: T, component: CalcACS },
+  { id: 'calefaccion',      label: 'Calefacción',          desc: 'Radiadores · CTE DB-HE',               categoria: 'Térmica',      icon: Flame,          color: A, component: CalcCalefaccion },
+  { id: 'suelo_radiante',   label: 'Suelo radiante',       desc: 'UNE-EN 1264',                          categoria: 'Térmica',      icon: Waves,          color: A, component: CalcSueloRadiante },
+  { id: 'aislamiento',      label: 'Aislamiento térmico',  desc: 'CTE DB-HE1',                           categoria: 'Térmica',      icon: Layers,         color: A, component: CalcAislamiento },
+  { id: 'carga_termica',    label: 'Carga térmica',        desc: 'Balance de calor · RITE',              categoria: 'Térmica',      icon: Thermometer,    color: A, component: CalcCargaTermica },
+  // Eléctrica
+  { id: 'seccion_cable',    label: 'Sección de cable',     desc: 'ITC-BT-19',                            categoria: 'Eléctrica',    icon: Cable,          color: A, component: CalcSeccionCable },
+  { id: 'protecciones',     label: 'Protecciones',         desc: 'ITC-BT-22 / 24',                       categoria: 'Eléctrica',    icon: ShieldCheck,    color: A, component: CalcProtecciones },
+  { id: 'luminotecnia',     label: 'Luminotecnia',         desc: 'UNE-EN 12464-1',                       categoria: 'Eléctrica',    icon: Lightbulb,      color: A, component: CalcLuminotecnia },
+  { id: 'puesta_tierra',    label: 'Puesta a tierra',      desc: 'ITC-BT-18',                            categoria: 'Eléctrica',    icon: Zap,            color: A, component: CalcPuestaTierra },
+  // Fontanería
+  { id: 'agua_fria',        label: 'Agua fría',            desc: 'CTE DB-HS4',                           categoria: 'Fontanería',   icon: Droplets,       color: S, component: CalcAguaFria },
+  { id: 'agua_caliente_red',label: 'Distribución ACS',     desc: 'CTE DB-HS4',                           categoria: 'Fontanería',   icon: Flame,          color: T, component: CalcAguaCaliente },
+  { id: 'saneamiento',      label: 'Saneamiento',          desc: 'CTE DB-HS5',                           categoria: 'Fontanería',   icon: Waves,          color: V, component: CalcSaneamiento },
+  { id: 'pluviales',        label: 'Pluviales',            desc: 'CTE DB-HS5',                           categoria: 'Fontanería',   icon: CloudRain,      color: S, component: CalcPluviales },
+  // Renovables
+  { id: 'solar_termica',    label: 'Solar térmica',        desc: 'CTE DB-HE4',                           categoria: 'Renovables',   icon: Sun,            color: A, component: CalcSolarTermica },
+  { id: 'fotovoltaica',     label: 'Solar fotovoltaica',   desc: 'Autoconsumo · RD 244/2019',             categoria: 'Renovables',   icon: SunMedium,      color: A, component: CalcFotovoltaica },
+  { id: 'biomasa',          label: 'Caldera de biomasa',   desc: 'RITE',                                  categoria: 'Renovables',   icon: Trees,          color: E, component: CalcBiomasa },
+  { id: 'geotermia',        label: 'Geotermia',            desc: 'Sondas verticales',                     categoria: 'Renovables',   icon: Mountain,       color: E, component: CalcGeotermia },
+  // Utilidades
+  { id: 'conversor',        label: 'Conversor',            desc: 'Presión · Potencia · Caudal',           categoria: 'Utilidades',   icon: RefreshCw,      color: V, component: ConversorUnidades },
+  { id: 'checklist',        label: 'Checklist OCA',        desc: 'GLP · RITE pre-inspección',              categoria: 'Cumplimiento', icon: ClipboardCheck, color: E, component: ChecklistOCA },
 ]
 
 const CATEGORIAS = ['Todas', ...new Set(CALCULADORAS.map(c => c.categoria))]
@@ -26,6 +86,7 @@ export default function Calculadoras({ navigate, selectedObraId }) {
   const { obras } = useObras()
   const obraSel = obras.find(o => o.id === selectedObraId) || null
   const activeTab = CALCULADORAS.find(t => t.id === tab)
+  const ActiveComponent = activeTab?.component
 
   const filtradas = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -43,7 +104,7 @@ export default function Calculadoras({ navigate, selectedObraId }) {
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Calculadoras Técnicas</h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">
-            Fórmulas reales · RITE · RIGLO (RD 919/2006) · UNE-EN 1057 · CTE DB-HE4
+            {CALCULADORAS.length} calculadoras · RITE · RIGLO · UNE · CTE · REBT
           </p>
         </div>
         {obraSel ? (
@@ -134,11 +195,7 @@ export default function Calculadoras({ navigate, selectedObraId }) {
             <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1" />
           </div>
 
-          {tab === 'glp'       && <CalcGLP      obraId={selectedObraId} obraNombre={obraSel?.nombre} />}
-          {tab === 'tuberias'  && <CalcTuberias obraId={selectedObraId} obraNombre={obraSel?.nombre} />}
-          {tab === 'acs'       && <CalcACS      obraId={selectedObraId} obraNombre={obraSel?.nombre} />}
-          {tab === 'conversor' && <ConversorUnidades />}
-          {tab === 'checklist' && <ChecklistOCA />}
+          {ActiveComponent && <ActiveComponent obraId={selectedObraId} obraNombre={obraSel?.nombre} />}
         </>
       )}
 
@@ -146,7 +203,7 @@ export default function Calculadoras({ navigate, selectedObraId }) {
       <div className="bg-amber-50 border border-amber-200 dark:bg-amber-500/10 dark:border-amber-500/20 rounded-xl p-4 text-xs text-amber-700 dark:text-amber-400">
         <span className="font-bold">Aviso: </span>
         Los resultados son orientativos. Toda instalación debe ser verificada y firmada por un técnico
-        competente habilitado. Las distancias de seguridad GLP se basan en RIGLO (RD 919/2006).
+        competente habilitado según la normativa vigente antes de su ejecución.
       </div>
     </div>
   )
