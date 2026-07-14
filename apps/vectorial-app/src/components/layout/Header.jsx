@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Home, Building2, FileText, Package, BookOpen, Calculator, User, CreditCard, Settings } from 'lucide-react'
+import { Search, Home, Building2, FileText, Package, BookOpen, Calculator, PenTool, User, CreditCard, Settings } from 'lucide-react'
 import Modal from '../ui/Modal'
 
 const DESTINOS = [
@@ -10,6 +10,7 @@ const DESTINOS = [
   { to: '/materiales',   label: 'Materiales',                  icon: Package },
   { to: '/catalogo',     label: 'Catálogo técnico',            icon: BookOpen },
   { to: '/calculadoras', label: 'Calculadoras',                icon: Calculator },
+  { to: '/planos',       label: 'Editor de planos',            icon: PenTool },
   { to: '/perfil',       label: 'Mi Perfil',                   icon: User },
   { to: '/billing',      label: 'Facturación / Suscripción',   icon: CreditCard },
   { to: '/ajustes',      label: 'Ajustes',                     icon: Settings },

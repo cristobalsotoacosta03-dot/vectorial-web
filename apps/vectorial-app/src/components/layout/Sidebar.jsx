@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-  Home, Building2, FileText, Package, BookOpen, Calculator,
+  Home, Building2, FileText, Package, BookOpen, Calculator, PenTool,
   User, CreditCard, Settings, Sun, Moon, LogOut, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react'
 import { useTheme } from '../../hooks/useTheme'
@@ -14,6 +14,7 @@ const NAV_OPERATIVO = [
   { to: '/materiales',   label: 'Materiales',   icon: Package },
   { to: '/catalogo',     label: 'Catálogo',     icon: BookOpen },
   { to: '/calculadoras', label: 'Calcular',     icon: Calculator },
+  { to: '/planos',       label: 'Planos',       icon: PenTool },
 ]
 
 const NAV_ADMIN = [

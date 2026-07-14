@@ -10,6 +10,7 @@ import Obras        from './pages/Obras'
 import Presupuestos from './pages/Presupuestos'
 import Catalogo     from './pages/Catalogo'
 import Calculadoras from './pages/Calculadoras'
+import Planos       from './pages/Planos'
 import Materiales   from './pages/Materiales'
 import Perfil       from './pages/Perfil'
 import Billing      from './pages/Billing'
@@ -24,6 +25,7 @@ const PAGE_PATHS = {
   materiales:   '/materiales',
   catalogo:     '/catalogo',
   calculadoras: '/calculadoras',
+  planos:       '/planos',
 }
 
 export default function App() {
@@ -51,6 +53,7 @@ export default function App() {
           <Route path="materiales"   element={<Materiales   navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />} />
           <Route path="catalogo"     element={<Catalogo     navigate={navigate} />} />
           <Route path="calculadoras" element={<Calculadoras navigate={navigate} selectedObraId={selectedObraId} />} />
+          <Route path="planos"      element={<Planos       selectedObraId={selectedObraId} />} />
 
           <Route path="perfil"  element={<Perfil />} />
           <Route path="billing" element={<Billing />} />
