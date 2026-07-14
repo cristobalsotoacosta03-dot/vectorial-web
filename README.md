@@ -15,7 +15,7 @@ vectorial/
 ## 🚀 Aplicaciones
 
 ### Vectorial App
-**URL:** https://vectorial-app.vercel.app
+**URL:** https://usevectorial.vercel.app
 
 El producto completo (Core Engine), con cuenta y datos reales por empresa (Supabase + RLS multi-tenant):
 - 🧮 GLP, Tuberías, ACS, Conversor
