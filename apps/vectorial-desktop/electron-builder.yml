@@ -1,0 +1,39 @@
+appId: com.vectorial.app
+productName: Vectorial
+copyright: Vectorial
+
+# La app no tiene dependencias de runtime propias (main/preload solo usan
+# módulos nativos de Node: http, fs, path). En el monorepo con npm
+# workspaces, el paso normal de "instalar dependencias de producción" de
+# electron-builder termina podando node_modules hoisted compartido por
+# todo el repo (incluido su propio app-builder-bin) — se desactiva porque
+# aquí no hace falta.
+npmRebuild: false
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - electron/**/*
+  - package.json
+
+# El build web de vectorial-app (npm run build:web) se copia tal cual junto
+# al instalador y se sirve desde un servidor HTTP local en tiempo de
+# ejecución (ver electron/main/server.js) — no vía file://, porque
+# react-router-dom necesita el fallback de SPA que file:// no soporta.
+extraResources:
+  - from: ../vectorial-app/dist
+    to: renderer
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  artifactName: ${productName}-${version}-setup.${ext}
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
