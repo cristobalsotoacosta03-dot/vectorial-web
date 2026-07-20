@@ -1,5 +1,8 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { LineChart, Line, XAxis, YAxis, Tooltip as ChartTooltip, ReferenceDot, ResponsiveContainer, CartesianGrid } from 'recharts'
 import ExportCalculo from './ExportCalculo'
+import BuscarComponenteButton from './BuscarComponenteButton'
+import { validarNumero } from '../lib/validation'
 
 // ── Tablas de referencia ───────────────────────────────────────────────────
 
@@ -96,7 +99,7 @@ function calcular({ material, fluido, caudal_lh, longitud, di_mm }) {
 }
 
 // ── Componente ─────────────────────────────────────────────────────────────
-export default function CalcTuberias({ obraId, obraNombre }) {
+export default function CalcTuberias({ obraId, obraNombre, calculadoraId = 'tuberias', componente }) {
   const [material, setMaterial] = useState('cobre')
   const [fluido,   setFluido]   = useState('acs')
   const [form, setForm] = useState({ caudal_lh: 500, longitud: 20 })
@@ -104,6 +107,27 @@ export default function CalcTuberias({ obraId, obraNombre }) {
 
   const diams = useMemo(() => getDiams(material), [material])
   const diSel = diams[Math.min(diIdx, diams.length - 1)] || diams[0]
+
+  // Prellenado desde una tubería seleccionada en la Librería de Componentes
+  useEffect(() => {
+    if (!componente || componente.tipo !== 'tuberia') return
+    const mat = (componente.especificaciones?.material || '').toLowerCase()
+    const nuevoMaterial = mat.includes('cobre') ? 'cobre' : mat.includes('acero') ? 'acero' : null
+    if (!nuevoMaterial) return // PE/multicapa no tienen equivalente en esta calculadora
+    setMaterial(nuevoMaterial)
+    const diametroObjetivo = componente.especificaciones?.diametro_mm
+    if (diametroObjetivo) {
+      const lista = getDiams(nuevoMaterial)
+      let mejorIdx = 0, mejorDist = Infinity
+      lista.forEach((d, i) => {
+        const de = d.ref?.de ?? d.di
+        const dist = Math.abs(de - diametroObjetivo)
+        if (dist < mejorDist) { mejorDist = dist; mejorIdx = i }
+      })
+      setDiIdx(mejorIdx)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [componente])
 
   const r = useMemo(() => {
     if (!diSel) return null
@@ -116,6 +140,27 @@ export default function CalcTuberias({ obraId, obraNombre }) {
   const fmtV = n => n.toFixed(2)
   const fmtP = n => n.toFixed(1)
   const fmtBig = n => n.toLocaleString('es-ES', { maximumFractionDigits: 0 })
+
+  const errores = useMemo(() => ({
+    caudal_lh: validarNumero(form.caudal_lh, { min: 1, label: 'El caudal' }),
+    longitud:  validarNumero(form.longitud,  { min: 0.1, label: 'La longitud del tramo' }),
+  }), [form])
+  const hayErrores = Object.values(errores).some(Boolean)
+  const errClass = err => `w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${err ? 'border-red-300 bg-red-50/60 focus:ring-red-400' : 'border-slate-200 focus:ring-sky-400'}`
+
+  // Curva de pérdida de carga unitaria frente al caudal, para el diámetro y
+  // fluido seleccionados — sitúa el punto de trabajo actual sobre la curva.
+  const curvaPerdida = useMemo(() => {
+    if (!diSel) return []
+    const puntos = []
+    const base = Math.max(parseFloat(form.caudal_lh) || 500, 100)
+    for (let i = 1; i <= 10; i++) {
+      const q = Math.round(base * i / 5)
+      const c = calcular({ material, fluido, caudal_lh: q, longitud: form.longitud, di_mm: diSel.di })
+      puntos.push({ caudal: q, perdida: Number(c.dP_m.toFixed(2)) })
+    }
+    return puntos
+  }, [material, fluido, form.caudal_lh, form.longitud, diSel])
 
   const camposExport = useMemo(() => r && diSel ? [
     { label: 'Material',                     valor: { cobre: 'Cobre (UNE-EN 1057)', acero: 'Acero DIN 2440', ppr: 'PPR PN20' }[material] },
@@ -143,13 +188,24 @@ export default function CalcTuberias({ obraId, obraNombre }) {
 
       {/* ── Panel entrada ── */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
-        <div className="flex items-center gap-3">
-          <span className="bg-sky-100 text-sky-500 w-10 h-10 rounded-xl flex items-center justify-center text-xl">⚙️</span>
-          <div>
-            <h2 className="font-bold text-slate-800">Dimensionado de tuberías</h2>
-            <p className="text-xs text-slate-400">Darcy-Weisbach · UNE-EN 1057 · RITE IT 1.3.4.2.1</p>
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="bg-sky-100 text-sky-500 w-10 h-10 rounded-xl flex items-center justify-center text-xl">⚙️</span>
+            <div>
+              <h2 className="font-bold text-slate-800">Dimensionado de tuberías</h2>
+              <p className="text-xs text-slate-400">Darcy-Weisbach · UNE-EN 1057 · RITE IT 1.3.4.2.1</p>
+            </div>
           </div>
+          <BuscarComponenteButton calculadoraId={calculadoraId} className="shrink-0" />
         </div>
+
+        {componente && (
+          <div className="bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-xs text-sky-700">
+            {componente.tipo === 'tuberia'
+              ? <>Material y diámetro prellenados desde <strong>{componente.nombre}</strong></>
+              : <><strong>{componente.nombre}</strong> no es una tubería — no se ha prellenado ningún campo.</>}
+          </div>
+        )}
 
         {/* Material */}
         <div>
@@ -196,13 +252,17 @@ export default function CalcTuberias({ obraId, obraNombre }) {
             <label className="block text-xs font-semibold text-slate-600 mb-1.5">Caudal (L/h)</label>
             <input type="number" min="1" step="10" value={form.caudal_lh}
               onChange={e => set('caudal_lh', e.target.value)}
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent" />
+              aria-invalid={!!errores.caudal_lh}
+              className={errClass(errores.caudal_lh)} />
+            {errores.caudal_lh && <p className="text-[11px] mt-1 text-red-600 font-medium">{errores.caudal_lh}</p>}
           </div>
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1.5">Longitud tramo (m)</label>
             <input type="number" min="0.1" step="1" value={form.longitud}
               onChange={e => set('longitud', e.target.value)}
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent" />
+              aria-invalid={!!errores.longitud}
+              className={errClass(errores.longitud)} />
+            {errores.longitud && <p className="text-[11px] mt-1 text-red-600 font-medium">{errores.longitud}</p>}
           </div>
         </div>
       </div>
@@ -210,6 +270,11 @@ export default function CalcTuberias({ obraId, obraNombre }) {
       {/* ── Panel resultados ── */}
       {r && (
         <div className="space-y-4">
+          {hayErrores && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-xs text-red-700 font-medium">
+              Corrige los campos marcados en rojo — los resultados no son fiables hasta entonces.
+            </div>
+          )}
           {/* Velocidad — resultado principal */}
           <div className={`rounded-2xl p-6 text-white shadow-lg ${r.ok_v ? 'bg-gradient-to-br from-sky-500 to-blue-600' : 'bg-gradient-to-br from-red-500 to-rose-600'}`}>
             <p className="text-blue-100 text-xs font-semibold uppercase tracking-wider mb-4">Resultados hidráulicos</p>
@@ -235,6 +300,21 @@ export default function CalcTuberias({ obraId, obraNombre }) {
               <span>Régimen: {r.flujo}</span>
               <span>{fmtP(r.dP_mbar)} mbar/m</span>
             </div>
+          </div>
+
+          {/* Curva pérdida de carga vs caudal */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+            <h3 className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-3">Pérdida de carga unitaria vs. caudal — {diSel?.label}</h3>
+            <ResponsiveContainer width="100%" height={160}>
+              <LineChart data={curvaPerdida} margin={{ top: 5, right: 8, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="caudal" tick={{ fontSize: 11 }} unit=" L/h" />
+                <YAxis tick={{ fontSize: 11 }} unit=" Pa/m" width={70} />
+                <ChartTooltip formatter={v => [`${v} Pa/m`, 'Pérdida de carga']} labelFormatter={q => `${q} L/h`} />
+                <ReferenceDot x={Number(form.caudal_lh)} y={r.dP_m} r={4} fill="#0284c7" stroke="white" strokeWidth={1.5} />
+                <Line type="monotone" dataKey="perdida" stroke="#0284c7" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
 
           {/* Tabla de espesores UNE-EN 1057 (solo cobre) */}

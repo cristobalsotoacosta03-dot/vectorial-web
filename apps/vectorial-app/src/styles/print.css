@@ -1,0 +1,55 @@
+/* Vectorial — modo de impresión: al pulsar Ctrl+P (o el botón "Imprimir")
+   se oculta la navegación (sidebar, header, footer) y se deja solo el
+   contenido principal, en fondo blanco y con saltos de página razonables. */
+@media print {
+  [data-print-hide] {
+    display: none !important;
+  }
+
+  body {
+    background: #fff !important;
+  }
+
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  * {
+    color: #0f172a !important;
+    box-shadow: none !important;
+  }
+
+  .dark\:bg-slate-900,
+  .dark\:bg-slate-950 {
+    background: #fff !important;
+  }
+
+  table, .break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  h1, h2, h3 {
+    break-after: avoid;
+  }
+
+  a[href]::after {
+    content: '';
+  }
+}
+
+#print-footer {
+  display: none;
+}
+@media print {
+  #print-footer {
+    display: block;
+    margin-top: 24px;
+    padding-top: 8px;
+    border-top: 1px solid #cbd5e1;
+    font-size: 10px;
+    color: #64748b;
+    text-align: center;
+  }
+}

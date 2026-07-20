@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
-  Home, Building2, FileText, Package, BookOpen, Calculator, PenTool,
+  Home, Building2, FolderOpen, FileText, Package, Layers, Calculator, PenTool,
+  Truck, ClipboardCheck, GanttChartSquare, FileBadge, History,
   User, CreditCard, Settings, Sun, Moon, LogOut, PanelLeftClose, PanelLeftOpen, X,
 } from 'lucide-react'
 import { useTheme } from '../../hooks/useTheme'
@@ -10,10 +11,16 @@ import Tooltip from '../ui/Tooltip'
 const NAV_OPERATIVO = [
   { to: '/',             label: 'Inicio',       end: true, icon: Home },
   { to: '/obras',        label: 'Obras',        icon: Building2 },
+  { to: '/proyectos',    label: 'Mis Proyectos', icon: FolderOpen },
   { to: '/presupuestos', label: 'Presupuestos', icon: FileText },
   { to: '/materiales',   label: 'Materiales',   icon: Package },
-  { to: '/catalogo',     label: 'Catálogo',     icon: BookOpen },
+  { to: '/proveedores',  label: 'Proveedores',  icon: Truck },
+  { to: '/certificaciones', label: 'Certificaciones', icon: ClipboardCheck },
+  { to: '/gantt',        label: 'Planificación', icon: GanttChartSquare },
+  { to: '/documentacion', label: 'Documentación', icon: FileBadge },
+  { to: '/componentes',  label: 'Componentes',  icon: Layers, tooltip: 'Librería técnica de componentes' },
   { to: '/calculadoras', label: 'Calcular',     icon: Calculator },
+  { to: '/historial',    label: 'Historial',    icon: History },
   { to: '/planos',       label: 'Planos',       icon: PenTool },
 ]
 
@@ -23,7 +30,7 @@ const NAV_ADMIN = [
   { to: '/ajustes', label: 'Ajustes',                 icon: Settings },
 ]
 
-function NavItem({ to, label, end, icon: Icon, collapsed, onNavigate }) {
+function NavItem({ to, label, end, icon: Icon, tooltip, collapsed, onNavigate }) {
   const link = (
     <NavLink
       to={to}
@@ -51,7 +58,7 @@ function NavItem({ to, label, end, icon: Icon, collapsed, onNavigate }) {
     </NavLink>
   )
 
-  return collapsed ? <Tooltip label={label} side="right">{link}</Tooltip> : link
+  return collapsed ? <Tooltip label={tooltip || label} side="right">{link}</Tooltip> : link
 }
 
 export default function Sidebar({ collapsed = false, onToggle, mobileOpen = false, onCloseMobile }) {
@@ -76,6 +83,7 @@ export default function Sidebar({ collapsed = false, onToggle, mobileOpen = fals
       )}
 
       <aside
+        data-print-hide
         className={`fixed lg:sticky inset-y-0 left-0 top-0 z-40 lg:z-auto h-screen shrink-0 flex flex-col bg-white dark:bg-slate-900 lg:bg-white/80 lg:dark:bg-slate-900/70 backdrop-blur-md border-r border-slate-200 dark:border-slate-800 transition-transform lg:transition-all duration-200 w-64 ${
           collapsed ? 'lg:w-[72px]' : 'lg:w-64'
         } ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}

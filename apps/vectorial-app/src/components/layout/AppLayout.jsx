@@ -46,9 +46,12 @@ export default function AppLayout() {
           </SubscriptionGate>
         </main>
 
-        <footer className="py-6 text-center text-xs text-slate-400 dark:text-slate-600 border-t border-slate-200 dark:border-slate-800">
-          Vectorial — Prototipo v0.2 · RITE · RIGLO · UNE-EN 1057 · CTE DB-HE4
+        <footer data-print-hide className="py-6 text-center text-xs text-slate-400 dark:text-slate-600 border-t border-slate-200 dark:border-slate-800">
+          Vectorial — Prototipo v0.2 · RITE · UNE-EN 1057 · CTE DB-HE4
         </footer>
+        <p id="print-footer">
+          Vectorial · Impreso el {new Date().toLocaleString('es-ES', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+        </p>
       </div>
     </div>
   )

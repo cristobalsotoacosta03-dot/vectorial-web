@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react'
 import { Search, X, Plus, User, MapPin, Calendar, Building2 } from 'lucide-react'
+import { BarChart, Bar, XAxis, YAxis, Tooltip as ChartTooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { useObras } from '../hooks/useObras'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
 import Input from '../components/ui/Input'
-import Spinner from '../components/ui/Spinner'
+import Skeleton from '../components/ui/Skeleton'
 import { useToast } from '../components/ui/Toast'
 
 const ESTADO_CFG = {
@@ -16,22 +17,63 @@ const ESTADO_CFG = {
 
 const FILTROS = ['todas', 'activa', 'pausada', 'finalizada']
 const FORM_VACIO = { nombre:'', cliente:'', direccion:'', estado:'activa', fecha_inicio:'', fecha_fin:'', descripcion:'' }
+const ORDENES = [
+  { id: 'reciente', label: 'Más reciente' },
+  { id: 'nombre',   label: 'Nombre (A-Z)' },
+  { id: 'fecha_fin',label: 'Fecha de fin' },
+]
+
+const MES_LABEL = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+
+function obrasPorMes(obras) {
+  const hoy = new Date()
+  const meses = []
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1)
+    meses.push({ key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`, label: MES_LABEL[d.getMonth()], iniciadas: 0, finalizadas: 0 })
+  }
+  const porClave = Object.fromEntries(meses.map(m => [m.key, m]))
+  for (const o of obras) {
+    if (o.fecha_inicio) {
+      const key = o.fecha_inicio.slice(0, 7)
+      if (porClave[key]) porClave[key].iniciadas += 1
+    }
+    if (o.estado === 'finalizada' && o.fecha_fin) {
+      const key = o.fecha_fin.slice(0, 7)
+      if (porClave[key]) porClave[key].finalizadas += 1
+    }
+  }
+  return meses
+}
 
 export default function Obras() {
   const { obras, loading, modoDemo, addObra, kpi } = useObras()
   const { notify } = useToast()
   const [filtro, setFiltro]       = useState('todas')
   const [query, setQuery]         = useState('')
+  const [desde, setDesde]         = useState('')
+  const [hasta, setHasta]         = useState('')
+  const [orden, setOrden]         = useState('reciente')
   const [mostrarForm, setForm]    = useState(false)
   const [form, setFormData]       = useState(FORM_VACIO)
   const [guardando, setGuardando] = useState(false)
 
+  const grafico = useMemo(() => obrasPorMes(obras), [obras])
+
   const lista = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return obras
+    const filtradas = obras
       .filter(o => filtro === 'todas' || o.estado === filtro)
       .filter(o => !q || o.nombre.toLowerCase().includes(q) || o.cliente?.toLowerCase().includes(q))
-  }, [obras, filtro, query])
+      .filter(o => !desde || (o.fecha_inicio && o.fecha_inicio >= desde))
+      .filter(o => !hasta || (o.fecha_inicio && o.fecha_inicio <= hasta))
+    const ordenada = [...filtradas].sort((a, b) => {
+      if (orden === 'nombre') return a.nombre.localeCompare(b.nombre)
+      if (orden === 'fecha_fin') return (a.fecha_fin || '9999') < (b.fecha_fin || '9999') ? -1 : 1
+      return 0 // 'reciente' — respeta el orden ya devuelto por el hook (created_at desc)
+    })
+    return ordenada
+  }, [obras, filtro, query, desde, hasta, orden])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -48,8 +90,17 @@ export default function Obras() {
   }
 
   if (loading) return (
-    <div className="flex items-center justify-center py-24 text-slate-400 gap-3">
-      <Spinner /> Cargando obras...
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <Card key={i} className="p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <Skeleton width="60%" height={18} />
+            <Skeleton width={64} height={22} className="rounded-full" />
+          </div>
+          <Skeleton width="40%" height={13} />
+          <Skeleton count={2} height={12} />
+        </Card>
+      ))}
     </div>
   )
 
@@ -68,6 +119,22 @@ export default function Obras() {
           </Button>
         </div>
       </div>
+
+      {/* Obras por mes */}
+      <Card className="p-5 mb-6">
+        <p className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wide mb-3">Obras iniciadas vs. finalizadas — últimos 6 meses</p>
+        <ResponsiveContainer width="100%" height={160}>
+          <BarChart data={grafico} barGap={4}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-slate-100 dark:stroke-slate-800" />
+            <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+            <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} width={24} />
+            <ChartTooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0' }} />
+            <Legend wrapperStyle={{ fontSize: 11 }} />
+            <Bar dataKey="iniciadas" name="Iniciadas" fill="#0066cc" radius={[3, 3, 0, 0]} />
+            <Bar dataKey="finalizadas" name="Finalizadas" fill="#10b981" radius={[3, 3, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </Card>
 
       {/* Formulario */}
       {mostrarForm && (
@@ -113,7 +180,7 @@ export default function Obras() {
       )}
 
       {/* Búsqueda + filtros */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+      <div className="flex flex-col sm:flex-row gap-3 mb-3">
         <div className="relative flex-1 max-w-sm">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -132,6 +199,29 @@ export default function Obras() {
               {f === 'todas' ? `Todas (${obras.length})` : `${ESTADO_CFG[f]?.label} (${obras.filter(o=>o.estado===f).length})`}
             </button>
           ))}
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-end gap-3 mb-6">
+        <div>
+          <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">Inicio desde</label>
+          <input type="date" value={desde} onChange={e => setDesde(e.target.value)}
+            className="border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/40" />
+        </div>
+        <div>
+          <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">Inicio hasta</label>
+          <input type="date" value={hasta} onChange={e => setHasta(e.target.value)}
+            className="border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/40" />
+        </div>
+        {(desde || hasta) && (
+          <button onClick={() => { setDesde(''); setHasta('') }} className="text-xs text-slate-400 hover:text-red-500 pb-2">Limpiar fechas</button>
+        )}
+        <div className="ml-auto">
+          <label className="block text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">Ordenar por</label>
+          <select value={orden} onChange={e => setOrden(e.target.value)}
+            className="border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/40">
+            {ORDENES.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
+          </select>
         </div>
       </div>
 

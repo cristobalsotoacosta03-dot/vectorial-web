@@ -1,53 +1,113 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 
 const KEY = 'vectorial_partidas_v1'
 
-function readAll() {
+function readLocal() {
   try { return JSON.parse(localStorage.getItem(KEY)) || {} }
   catch { return {} }
 }
 
+function writeLocal(todas) {
+  localStorage.setItem(KEY, JSON.stringify(todas))
+}
+
 /**
  * Gestiona el desglose de materiales (partidas) de una obra concreta.
- * Cada partida: { id, descripcion, unidad, cantidad, precio_unitario, margen_pct }
+ * Respaldado por la tabla `partidas_obra` de Supabase; si no hay sesión o
+ * falla la conexión, cae a localStorage para que la app siga siendo usable
+ * en modo demo (mismo patrón que useObras/usePresupuestos).
  */
 export function usePartidas(obraId) {
-  const [todas, setTodas] = useState(readAll)
+  const { empresaId } = useAuth()
+  const [partidas, setPartidas] = useState([])
+  const [loading, setLoading]   = useState(true)
+  const [modoDemo, setModoDemo] = useState(false)
 
-  useEffect(() => {
-    localStorage.setItem(KEY, JSON.stringify(todas))
-  }, [todas])
+  const cargar = useCallback(async () => {
+    if (!obraId) { setPartidas([]); setLoading(false); return }
+    setLoading(true)
+    try {
+      if (!supabase || !empresaId) {
+        setPartidas(readLocal()[obraId] || [])
+        setModoDemo(true)
+        return
+      }
+      const { data, error } = await supabase
+        .from('partidas_obra')
+        .select('*')
+        .eq('empresa_id', empresaId)
+        .eq('obra_id', obraId)
+        .order('created_at', { ascending: false })
 
-  const partidas = obraId ? (todas[obraId] || []) : []
+      if (error) {
+        console.error('Supabase error:', error)
+        setPartidas(readLocal()[obraId] || [])
+        setModoDemo(true)
+      } else {
+        setPartidas(data || [])
+      }
+    } catch (err) {
+      console.error('Error inesperado:', err)
+      setPartidas(readLocal()[obraId] || [])
+      setModoDemo(true)
+    } finally {
+      setLoading(false)
+    }
+  }, [obraId, empresaId])
 
-  function addPartida(data) {
+  useEffect(() => { cargar() }, [cargar])
+
+  async function addPartida(data) {
     if (!obraId) return
     const nueva = {
-      id:             String(Date.now()),
-      descripcion:    data.descripcion    || '',
-      unidad:         data.unidad         || 'ud',
-      cantidad:       parseFloat(data.cantidad)       || 1,
-      precio_unitario:parseFloat(data.precio_unitario)|| 0,
-      margen_pct:     parseFloat(data.margen_pct)     || 20,
+      descripcion:     data.descripcion || '',
+      unidad:          data.unidad || 'ud',
+      cantidad:        parseFloat(data.cantidad) || 1,
+      precio_unitario: parseFloat(data.precio_unitario) || 0,
+      margen_pct:      parseFloat(data.margen_pct) || 20,
+      tipo:            data.tipo || 'material',
     }
-    setTodas(prev => ({
-      ...prev,
-      [obraId]: [nueva, ...(prev[obraId] || [])],
-    }))
+
+    if (!supabase || !empresaId) {
+      const conId = { ...nueva, id: String(Date.now()) }
+      const todas = readLocal()
+      todas[obraId] = [conId, ...(todas[obraId] || [])]
+      writeLocal(todas)
+      setPartidas(todas[obraId])
+      return
+    }
+
+    const payload = { ...nueva, empresa_id: empresaId, obra_id: obraId }
+    const { data: creada, error } = await supabase.from('partidas_obra').insert([payload]).select().single()
+    if (error) { console.error('Supabase error:', error); return }
+    setPartidas(prev => [creada, ...prev])
   }
 
-  function removePartida(id) {
-    setTodas(prev => ({
-      ...prev,
-      [obraId]: (prev[obraId] || []).filter(p => p.id !== id),
-    }))
+  async function removePartida(id) {
+    if (!supabase || !empresaId) {
+      const todas = readLocal()
+      todas[obraId] = (todas[obraId] || []).filter(p => p.id !== id)
+      writeLocal(todas)
+      setPartidas(todas[obraId])
+      return
+    }
+    await supabase.from('partidas_obra').delete().eq('id', id)
+    setPartidas(prev => prev.filter(p => p.id !== id))
   }
 
-  function updatePartida(id, data) {
-    setTodas(prev => ({
-      ...prev,
-      [obraId]: (prev[obraId] || []).map(p => p.id === id ? { ...p, ...data } : p),
-    }))
+  async function updatePartida(id, data) {
+    if (!supabase || !empresaId) {
+      const todas = readLocal()
+      todas[obraId] = (todas[obraId] || []).map(p => p.id === id ? { ...p, ...data } : p)
+      writeLocal(todas)
+      setPartidas(todas[obraId])
+      return
+    }
+    const { data: actualizada, error } = await supabase.from('partidas_obra').update(data).eq('id', id).select().single()
+    if (error) { console.error('Supabase error:', error); return }
+    setPartidas(prev => prev.map(p => p.id === id ? actualizada : p))
   }
 
   // ── KPIs derivados ──────────────────────────────────────────────────────
@@ -59,7 +119,7 @@ export function usePartidas(obraId) {
     : 0
 
   return {
-    partidas, addPartida, removePartida, updatePartida,
+    partidas, loading, modoDemo, addPartida, removePartida, updatePartida, recargar: cargar,
     kpi: { totalCoste, totalVenta, beneficio, margenMedio },
   }
 }

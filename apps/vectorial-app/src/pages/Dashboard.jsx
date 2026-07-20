@@ -1,12 +1,13 @@
 import { useMemo } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip as ChartTooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
-import { FileUp, Building2, CheckCircle2, Boxes, FileText, Wallet, TrendingUp, FolderKanban, AlertTriangle, BookOpen, Calculator } from 'lucide-react'
+import { FileUp, Building2, CheckCircle2, Boxes, FileText, Wallet, TrendingUp, FolderKanban, AlertTriangle, Layers, Calculator } from 'lucide-react'
 import { useObras } from '../hooks/useObras'
 import { usePresupuestos } from '../hooks/usePresupuestos'
 import { CATEGORIAS_BIBLIA } from '../data/catalogo-tecnico'
 import ErrorMessage from '../components/ErrorMessage'
 import StatusBadge from '../components/ui/StatusBadge'
 import Card from '../components/ui/Card'
+import { SkeletonCard } from '../components/ui/Skeleton'
 
 const fmt    = (n) => Number(n).toLocaleString('es-ES', { maximumFractionDigits: 0 })
 const fmtDec = (n) => Number(n).toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
@@ -204,6 +205,11 @@ export default function Dashboard({ navigate, selectedObraId, setSelectedObraId 
       </div>
 
       {/* ── 4 KPI CARDS (consola de datos técnicos) ── */}
+      {(loadingObras || loadingPres) ? (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
+        </div>
+      ) : (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
 
         <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none p-6 hover:shadow-md dark:hover:border-slate-700 transition-all cursor-pointer"
@@ -267,6 +273,7 @@ export default function Dashboard({ navigate, selectedObraId, setSelectedObraId 
         </div>
 
       </div>
+      )}
 
       {/* ── DOS COLUMNAS: actividad + biblia ── */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -311,22 +318,22 @@ export default function Dashboard({ navigate, selectedObraId, setSelectedObraId 
           )}
         </Card>
 
-        {/* Acceso rápido Biblia Técnica + Calculadoras */}
+        {/* Acceso rápido Componentes Técnicos + Calculadoras */}
         <div className="lg:col-span-3 bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-900 dark:to-slate-950 dark:border dark:border-slate-800 rounded-xl shadow-sm dark:shadow-none p-6 text-white">
           <div className="flex items-center gap-3 mb-5">
             <span className="bg-primary-500/20 border border-primary-400/30 w-10 h-10 rounded-lg flex items-center justify-center">
-              <BookOpen size={20} />
+              <Layers size={20} />
             </span>
             <div>
-              <h2 className="text-sm font-bold text-white">Biblia del Instalador</h2>
-              <p className="text-xs text-slate-400">60 referencias técnicas · RITE · UNE · REBT</p>
+              <h2 className="text-sm font-bold text-white">Componentes Técnicos</h2>
+              <p className="text-xs text-slate-400">60 componentes de ingeniería · RITE · UNE · REBT</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2 mb-4">
             {CATEGORIAS_BIBLIA.map(cat => (
               <button
                 key={cat.id}
-                onClick={() => navigate('catalogo')}
+                onClick={() => navigate('componentes')}
                 className="flex items-center gap-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-lg px-3 py-2.5 text-left transition-all group"
               >
                 <span className="text-lg">{cat.icono}</span>
@@ -335,9 +342,9 @@ export default function Dashboard({ navigate, selectedObraId, setSelectedObraId 
             ))}
           </div>
           <div className="flex gap-2">
-            <button onClick={() => navigate('catalogo')}
+            <button onClick={() => navigate('componentes')}
               className="flex-1 bg-blue-600 hover:bg-blue-500 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors">
-              Abrir Catálogo Técnico →
+              Abrir Componentes →
             </button>
             <button onClick={() => navigate('calculadoras')}
               className="flex-1 inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium py-2.5 rounded-lg border border-white/20 transition-colors">

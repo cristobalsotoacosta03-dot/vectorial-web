@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vectorial-app",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--workspace=apps/vectorial-app"],
+      "port": 5173
+    },
+    {
+      "name": "vectorial-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--workspace=apps/vectorial-web"],
+      "port": 5173
+    },
+    {
+      "name": "vectorial-desktop",
+      "runtimeExecutable": "electron",
+      "runtimeArgs": ["."],
+      "port": 0
+    }
+  ]
+}

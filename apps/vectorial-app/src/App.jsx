@@ -8,10 +8,16 @@ import Onboarding   from './pages/Onboarding'
 import Dashboard    from './pages/Dashboard'
 import Obras        from './pages/Obras'
 import Presupuestos from './pages/Presupuestos'
-import Catalogo     from './pages/Catalogo'
+import MisProyectos from './pages/MisProyectos'
+import Componentes  from './pages/Componentes'
 import Calculadoras from './pages/Calculadoras'
 import Planos       from './pages/Planos'
 import Materiales   from './pages/Materiales'
+import Proveedores  from './pages/Proveedores'
+import Certificaciones from './pages/Certificaciones'
+import Gantt         from './pages/Gantt'
+import Documentacion  from './pages/Documentacion'
+import Historial      from './pages/Historial'
 import Perfil       from './pages/Perfil'
 import Billing      from './pages/Billing'
 import Ajustes      from './pages/Ajustes'
@@ -21,11 +27,17 @@ import './index.css'
 const PAGE_PATHS = {
   dashboard:    '/',
   obras:        '/obras',
+  proyectos:    '/proyectos',
   presupuestos: '/presupuestos',
   materiales:   '/materiales',
-  catalogo:     '/catalogo',
+  proveedores:  '/proveedores',
+  certificaciones: '/certificaciones',
+  gantt:        '/gantt',
+  documentacion: '/documentacion',
+  componentes:  '/componentes',
   calculadoras: '/calculadoras',
   planos:       '/planos',
+  historial:    '/historial',
 }
 
 export default function App() {
@@ -49,11 +61,17 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route index               element={<Dashboard    navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />} />
           <Route path="obras"        element={<Obras        navigate={navigate} />} />
+          <Route path="proyectos"    element={<MisProyectos navigate={navigate} />} />
           <Route path="presupuestos" element={<Presupuestos navigate={navigate} />} />
           <Route path="materiales"   element={<Materiales   navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />} />
-          <Route path="catalogo"     element={<Catalogo     navigate={navigate} />} />
+          <Route path="proveedores"  element={<Proveedores  navigate={navigate} />} />
+          <Route path="certificaciones" element={<Certificaciones navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />} />
+          <Route path="gantt"        element={<Gantt        navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />} />
+          <Route path="documentacion" element={<Documentacion navigate={navigate} selectedObraId={selectedObraId} setSelectedObraId={setSelectedObraId} />} />
+          <Route path="componentes"  element={<Componentes />} />
           <Route path="calculadoras" element={<Calculadoras navigate={navigate} selectedObraId={selectedObraId} />} />
           <Route path="planos"      element={<Planos       selectedObraId={selectedObraId} />} />
+          <Route path="historial"   element={<Historial />} />
 
           <Route path="perfil"  element={<Perfil />} />
           <Route path="billing" element={<Billing />} />

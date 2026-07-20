@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import {
   Search, Flame, Gauge, Droplets, RefreshCw, ClipboardCheck, ArrowLeft,
   Waves, Droplet, FireExtinguisher, Cable, ShieldCheck, Lightbulb, Zap,
@@ -43,7 +44,7 @@ const A = 'text-amber-600 bg-amber-50 dark:bg-amber-500/10 dark:text-amber-400'
 
 const CALCULADORAS = [
   // Gas
-  { id: 'glp',              label: 'Depósito GLP',        desc: 'RIGLO · distancias de seguridad',      categoria: 'Gas',          icon: Flame,          color: C, component: CalcGLP },
+  { id: 'glp',              label: 'Depósito GLP',        desc: 'ITC-ICG 03 · UNE 60250:2008',          categoria: 'Gas',          icon: Flame,          color: C, component: CalcGLP },
   { id: 'ventilacion_gas',  label: 'Ventilación de gas',   desc: 'UNE 60670-6',                          categoria: 'Gas',          icon: Wind,           color: C, component: CalcVentilacionGas },
   // Hidráulica
   { id: 'tuberias',         label: 'Tuberías',             desc: 'Darcy-Weisbach · UNE-EN 1057',         categoria: 'Hidráulica',   icon: Gauge,          color: S, component: CalcTuberias },
@@ -80,7 +81,11 @@ const CALCULADORAS = [
 const CATEGORIAS = ['Todas', ...new Set(CALCULADORAS.map(c => c.categoria))]
 
 export default function Calculadoras({ navigate, selectedObraId }) {
-  const [tab, setTab] = useState(null)
+  const location = useLocation()
+  // Si venimos de "Usar en cálculo" desde Componentes, abrimos directamente
+  // la calculadora indicada con el componente ya seleccionado.
+  const [tab, setTab] = useState(location.state?.tab ?? null)
+  const componentePrellenado = location.state?.componente ?? null
   const [query, setQuery] = useState('')
   const [categoria, setCategoria] = useState('Todas')
   const { obras } = useObras()
@@ -104,7 +109,7 @@ export default function Calculadoras({ navigate, selectedObraId }) {
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Calculadoras Técnicas</h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">
-            {CALCULADORAS.length} calculadoras · RITE · RIGLO · UNE · CTE · REBT
+            {CALCULADORAS.length} calculadoras · RITE · UNE · CTE · REBT
           </p>
         </div>
         {obraSel ? (
@@ -195,7 +200,7 @@ export default function Calculadoras({ navigate, selectedObraId }) {
             <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1" />
           </div>
 
-          {ActiveComponent && <ActiveComponent obraId={selectedObraId} obraNombre={obraSel?.nombre} />}
+          {ActiveComponent && <ActiveComponent obraId={selectedObraId} obraNombre={obraSel?.nombre} calculadoraId={activeTab.id} componente={componentePrellenado} />}
         </>
       )}
 

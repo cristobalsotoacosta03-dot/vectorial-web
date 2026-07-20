@@ -1,5 +1,8 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { BarChart, Bar, XAxis, YAxis, Tooltip as ChartTooltip, ResponsiveContainer, CartesianGrid, Cell } from 'recharts'
 import ExportCalculo from './ExportCalculo'
+import BuscarComponenteButton from './BuscarComponenteButton'
+import { validarNumero } from '../lib/validation'
 
 // ── Demanda ACS por tipo de uso — CTE DB-HE4 Tabla 4.1 ─────────────────────
 const USOS_ACS = [
@@ -57,7 +60,7 @@ function calcInercia({ sistema, potencia }) {
 }
 
 // ── Componente ─────────────────────────────────────────────────────────────
-export default function CalcACS({ obraId, obraNombre }) {
+export default function CalcACS({ obraId, obraNombre, calculadoraId = 'acs', componente }) {
   const [modo, setModo] = useState('acumulador')
 
   // ACS
@@ -70,21 +73,67 @@ export default function CalcACS({ obraId, obraNombre }) {
 
   const setA = (k, v) => setAcsForm(f => ({ ...f, [k]: v }))
   const setI = (k, v) => setInForm(f => ({ ...f, [k]: v }))
+
+  // Prellenado desde un equipo (caldera/aerotermia) seleccionado en la
+  // Librería de Componentes — su potencia alimenta el cálculo de inercia.
+  useEffect(() => {
+    if (!componente) return
+    const potencia = componente.especificaciones?.potencia_kw
+    if (potencia) {
+      setModo('inercia')
+      setI('potencia', potencia)
+      if (componente.aplicaciones?.some(a => a.toLowerCase().includes('calefacción')) && !componente.aplicaciones?.some(a => a.toLowerCase().includes('acs'))) {
+        setI('sistema', 'calefaccion')
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [componente])
   const fmt = n => Number(n).toLocaleString('es-ES', { maximumFractionDigits: 0 })
   const fmtD = n => Number(n).toLocaleString('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+
+  const erroresACS = useMemo(() => {
+    const T_acs = Number(acsForm.T_acs), T_red = Number(acsForm.T_red)
+    return {
+      ocupacion: validarNumero(acsForm.ocupacion, { min: 1, label: 'La ocupación' }),
+      T_acs:     validarNumero(acsForm.T_acs, { min: 45, max: 70, label: 'La T. de acumulación' }),
+      T_red:     validarNumero(acsForm.T_red, { min: 5, max: 25, label: 'La T. de red fría' })
+        || (!Number.isNaN(T_acs) && !Number.isNaN(T_red) && T_red >= T_acs ? 'La T. de red fría debe ser menor que la de acumulación' : null),
+    }
+  }, [acsForm])
+  const hayErroresACS = Object.values(erroresACS).some(Boolean)
+  const errIn = validarNumero(inForm.potencia, { min: 1, label: 'La potencia' })
+  const errClassTeal   = err => `w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${err ? 'border-red-300 bg-red-50/60 focus:ring-red-400' : 'border-slate-200 focus:ring-teal-400'}`
+  const errClassViolet = err => `w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${err ? 'border-red-300 bg-red-50/60 focus:ring-red-400' : 'border-slate-200 focus:ring-violet-400'}`
+
+  const datosGraficoInercia = useMemo(() => SISTEMAS_INERCIA.map(s => ({
+    nombre: s.label.split(' / ')[0].split(' (')[0],
+    recomendado: Math.round(Number(inForm.potencia) * s.fRec) || 0,
+    activo: s.id === inForm.sistema,
+  })), [inForm.potencia, inForm.sistema])
 
   return (
     <div className="space-y-6">
       {/* Selector de modo */}
-      <div className="flex gap-2">
-        {[['acumulador','💧 Acumulador ACS','CTE HE-4 · RITE'],['inercia','⚡ Depósito de inercia','RITE IT 1.2.4.6']].map(([v, l, n]) => (
-          <button key={v} onClick={() => setModo(v)}
-            className={`flex items-center gap-2 px-5 py-3 rounded-xl border text-sm font-semibold transition-all ${modo === v ? 'bg-teal-600 text-white border-teal-600 shadow-md' : 'bg-white text-slate-500 border-slate-200 hover:bg-teal-50'}`}>
-            <span>{l}</span>
-            <span className="text-xs font-normal opacity-70 hidden sm:inline">— {n}</span>
-          </button>
-        ))}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex gap-2">
+          {[['acumulador','💧 Acumulador ACS','CTE HE-4 · RITE'],['inercia','⚡ Depósito de inercia','RITE IT 1.2.4.6']].map(([v, l, n]) => (
+            <button key={v} onClick={() => setModo(v)}
+              className={`flex items-center gap-2 px-5 py-3 rounded-xl border text-sm font-semibold transition-all ${modo === v ? 'bg-teal-600 text-white border-teal-600 shadow-md' : 'bg-white text-slate-500 border-slate-200 hover:bg-teal-50'}`}>
+              <span>{l}</span>
+              <span className="text-xs font-normal opacity-70 hidden sm:inline">— {n}</span>
+            </button>
+          ))}
+        </div>
+        <BuscarComponenteButton calculadoraId={calculadoraId} />
       </div>
+
+      {componente && (
+        <div className="bg-teal-50 border border-teal-200 rounded-xl px-3 py-2 text-xs text-teal-700">
+          {componente.especificaciones?.potencia_kw
+            ? <>Potencia prellenada desde <strong>{componente.nombre}</strong> en el depósito de inercia</>
+            : <><strong>{componente.nombre}</strong> no tiene potencia asociada — no se ha prellenado ningún campo.</>}
+        </div>
+      )}
 
       {/* ─────────────── MODO ACUMULADOR ACS ─────────────── */}
       {modo === 'acumulador' && (
@@ -114,7 +163,9 @@ export default function CalcACS({ obraId, obraNombre }) {
               </label>
               <input type="number" min="1" step="1" value={acsForm.ocupacion}
                 onChange={e => setA('ocupacion', e.target.value)}
-                className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent" />
+                aria-invalid={!!erroresACS.ocupacion}
+                className={errClassTeal(erroresACS.ocupacion)} />
+              {erroresACS.ocupacion && <p className="text-[11px] mt-1 text-red-600 font-medium">{erroresACS.ocupacion}</p>}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -122,15 +173,20 @@ export default function CalcACS({ obraId, obraNombre }) {
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">T. acumulación (°C)</label>
                 <input type="number" min="45" max="70" value={acsForm.T_acs}
                   onChange={e => setA('T_acs', e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent" />
+                  aria-invalid={!!erroresACS.T_acs}
+                  className={errClassTeal(erroresACS.T_acs)} />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">T. red fría (°C)</label>
                 <input type="number" min="5" max="25" value={acsForm.T_red}
                   onChange={e => setA('T_red', e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent" />
+                  aria-invalid={!!erroresACS.T_red}
+                  className={errClassTeal(erroresACS.T_red)} />
               </div>
             </div>
+            {(erroresACS.T_acs || erroresACS.T_red) && (
+              <p className="text-[11px] -mt-3 text-red-600 font-medium">{erroresACS.T_acs || erroresACS.T_red}</p>
+            )}
 
             <div className="bg-teal-50 border border-teal-200 rounded-xl p-3 text-xs text-teal-700">
               <span className="font-bold">Base normativa: </span>
@@ -139,6 +195,11 @@ export default function CalcACS({ obraId, obraNombre }) {
           </div>
 
           <div className="space-y-4">
+            {hayErroresACS && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-xs text-red-700 font-medium">
+                Corrige los campos marcados en rojo — los resultados no son fiables hasta entonces.
+              </div>
+            )}
             <div className="bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl p-6 text-white shadow-lg">
               <p className="text-teal-100 text-xs font-semibold uppercase tracking-wider mb-4">Resultados de dimensionado ACS</p>
               <div className="grid grid-cols-2 gap-4 mb-4">
@@ -213,7 +274,9 @@ export default function CalcACS({ obraId, obraNombre }) {
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Potencia de la instalación (kW)</label>
               <input type="number" min="1" step="1" value={inForm.potencia}
                 onChange={e => setI('potencia', e.target.value)}
-                className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent" />
+                aria-invalid={!!errIn}
+                className={errClassViolet(errIn)} />
+              {errIn && <p className="text-[11px] mt-1 text-red-600 font-medium">{errIn}</p>}
             </div>
 
             <div className="bg-violet-50 border border-violet-200 rounded-xl p-3 text-xs text-violet-700">
@@ -243,6 +306,25 @@ export default function CalcACS({ obraId, obraNombre }) {
                 <span>Factor: {rIn.s.fMin}–{rIn.s.fMax} L/kW</span>
                 <span>Cálculo físico (5 min): {fmt(rIn.V_fisico)} L</span>
               </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+              <h3 className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-3">
+                Volumen recomendado por tipo de sistema — {inForm.potencia || 0} kW
+              </h3>
+              <ResponsiveContainer width="100%" height={160}>
+                <BarChart data={datosGraficoInercia} margin={{ top: 5, right: 8, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="nombre" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 11 }} unit=" L" width={55} />
+                  <ChartTooltip formatter={v => [`${v} L`, 'Volumen recomendado']} />
+                  <Bar dataKey="recomendado" radius={[6, 6, 0, 0]}>
+                    {datosGraficoInercia.map((d, i) => (
+                      <Cell key={i} fill={d.activo ? '#7c3aed' : '#c4b5fd'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
 
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">

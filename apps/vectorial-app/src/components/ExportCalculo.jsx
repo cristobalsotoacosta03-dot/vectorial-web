@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useCalculos } from '../hooks/useCalculos'
+import { useState, useEffect, useCallback } from 'react'
+import { useHistorialCalculos } from '../hooks/useHistorialCalculos'
 
 // ── Generadores de contenido ───────────────────────────────────────────────
 
@@ -78,15 +78,28 @@ function generarTextoWA(titulo, campos, obraNombre) {
 // ── Componente ─────────────────────────────────────────────────────────────
 
 export default function ExportCalculo({ tipo, titulo, campos, obraId, obraNombre }) {
-  const { guardar } = useCalculos()
+  const { guardar } = useHistorialCalculos()
   const [guardado, setGuardado] = useState(false)
   const [copiado,  setCopiado]  = useState(false)
 
-  function handleGuardar() {
-    guardar(tipo, obraId, obraNombre, campos)
+  const handleGuardar = useCallback(() => {
+    guardar(tipo, titulo, obraId, obraNombre, campos)
     setGuardado(true)
     setTimeout(() => setGuardado(false), 2500)
-  }
+  }, [guardar, tipo, titulo, obraId, obraNombre, campos])
+
+  // Atajo Ctrl/Cmd+S — guarda el cálculo actual en el historial sin abrir
+  // el diálogo "Guardar página" del navegador.
+  useEffect(() => {
+    function onKeyDown(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault()
+        handleGuardar()
+      }
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [handleGuardar])
 
   function handleExportar() {
     const html = generarHTML(titulo, campos, obraNombre || 'Sin obra asignada')
